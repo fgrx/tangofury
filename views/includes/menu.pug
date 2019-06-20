@@ -1,0 +1,17 @@
+nav.navbar.is-dark(role="navigation" aria-label="main navigation")
+  div.container
+    div.navbar-brand
+      a.navbar-item(href="https://tangofury.com")
+        img(src="/img/tangofury-inline.png")
+      
+
+      a.navbar-burger.burger(role="button" aria-label="menu" aria-expanded="false" data-target="navMenu")
+        span(aria-hidden="true")
+        span(aria-hidden="true")
+        span(aria-hidden="true")
+
+    div.navbar-menu#navMenu  
+      div.navbar-end
+        a.navbar-item(href='/tango-videos/0')= "All videos"
+        a.navbar-item(href='/tango-maestros')= "Tango Maestros"
+        a.navbar-item(href='/selections')= "Selections"

@@ -1,0 +1,37 @@
+html
+  include includes/head.pug
+  body
+    include includes/menu.pug
+
+    section.section
+      div.container.padding
+        .columns.is-centered
+            .column.is-7
+                h1.title.is-1= title
+                if failedAuth=="false"
+                    article.message.is-danger
+                        .message-header
+                            p="Authentification Failed"
+                        .message-body
+                            p="Please check your login / password combination"
+
+                form(method="POST" action="/connexion")
+                    div.field  
+                        p.control.has-icons-left.has-icons-right
+                            input.input(type="email" name='login' placeholder="Email")
+                            span.icon.is-small.is-left
+                                i.fas.fa-envelope  
+                            span.icon.is-small.is-right     
+                                i.fas.fa-check
+                    
+                    div.field
+                        p.control.has-icons-left
+                            input.input(type="password" name="password" placeholder="Password")
+                            span.icon.is-small.is-left
+                                i.fas.fa-lock
+
+                    div.field
+                        p.control
+                            button.button.is-success(type="submit")= "Login"
+
+    include includes/footer.pug

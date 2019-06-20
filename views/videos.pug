@@ -1,0 +1,31 @@
+html
+  include includes/head.pug
+  body
+    include includes/menu.pug
+    section.section
+        div.container.padding
+            h1.title.is-1= title
+
+            div.dropdown.is-hoverable.right
+                div.dropdown-trigger
+                    button.button.is-fullwidth.is-medium(aria-haspopup="true" aria-controls="dropdown-menu")
+                        span="Filter by "
+                        span.icon.is-small
+                        i.fas.fa-angle-down
+                div.dropdown-menu#dropdown-menu(role="menu")
+                    div.dropdown-content
+                        a.dropdown-item(href='/videos/0')= "All"
+                        a.dropdown-item(href='/videos/vals/0')= "Vals"
+                        a.dropdown-item(href='/videos/milonga/0')= "Milongas"
+                        a.dropdown-item(href='/videos/other/0')= "Others"
+
+            section
+                div.videosList.columns.is-multiline.is-mobile
+                    each itemVideo,index in videos
+                        include includes/itemVideo.pug
+                
+            if nbResults>=24
+                a.button(href="/videos"+"/"+type+"/"+offset)= "Next videos"
+        
+
+    include includes/footer.pug

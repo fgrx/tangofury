@@ -1,0 +1,26 @@
+html
+  include includes/head.pug
+  body
+    include includes/menu.pug
+
+    section.section
+      div.container.padding
+
+        h1.title.is-1= title
+
+        section
+          h2.title.is-2= "Top videos"
+
+          div.videosList.columns.is-multiline
+              each itemVideo,index in topVideos
+                include includes/itemVideo.pug
+
+        section
+          h2.title.is-2= "Selections"
+            div.columns.selectionList.is-multiline
+              each itemSelection,index in selections
+                include includes/itemSelection.pug
+          a.button(href="selections")= "See all selections"
+        
+
+    include includes/footer.pug

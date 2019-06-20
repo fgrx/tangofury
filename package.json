@@ -1,0 +1,29 @@
+{
+  "name": "tangofury",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "script" :"node ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/storage": "^2.5.0",
+    "bulma": "^0.7.5",
+    "express": "^4.17.1",
+    "firebase": "^6.1.0",
+    "firebase-admin": "^8.0.0",
+    "firebaseauth": "^1.0.0",
+    "g": "^2.0.1",
+    "joi": "^14.3.1",
+    "moment": "^2.24.0",
+    "momentjs": "^2.0.0",
+    "multer": "^1.4.1",
+    "pug": "^2.0.3"
+  },
+  "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.9.0"
+  }
+}

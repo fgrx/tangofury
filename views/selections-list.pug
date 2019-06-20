@@ -1,0 +1,14 @@
+html
+  include includes/head.pug
+  body
+    include includes/menu.pug
+
+    section.section
+      div.container.padding
+        h1.title.is-1= title
+
+        div.columns.selectionList.is-multiline.is-mobile
+          each itemSelection,index in selections
+            include includes/itemSelection.pug
+    
+    include includes/footer.pug

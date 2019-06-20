@@ -1,0 +1,14 @@
+div.column.is-one-quarter-desktop.is-half-mobile
+    a(href="https://www.youtube.com/watch?v="+itemVideo.youtubeId target="_blank")
+        div.itemVideo.card
+            div.card-image
+                figure.image.is-4by3
+                    img.lazy(data-src=itemVideo.urlImage src="/img/placeholder.png")
+            div.card-content
+                div.content
+                    h3.title.is-5= itemVideo.title
+                    time
+                        if !itemVideo.type
+                            =  "tango " + moment(itemVideo.datePublication).format("YYYY/MM/DD")
+                        else
+                            = itemVideo.type + " " + moment(itemVideo.datePublication).format("YYYY/MM/DD")

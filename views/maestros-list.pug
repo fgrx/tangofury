@@ -1,0 +1,14 @@
+html
+  include includes/head.pug
+  body
+    include includes/menu.pug
+
+    section.section
+      div.container.padding
+        h1.title.is-1= title
+
+        div.columns.maestros.is-multiline.is-mobile
+          each itemMaestro,index in maestros
+            include includes/itemMaestro.pug
+    
+    include includes/footer.pug

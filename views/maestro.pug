@@ -1,0 +1,48 @@
+html
+  include includes/head.pug
+  body
+    include includes/menu.pug
+    div.container.padding
+        section.section
+            header
+                div.box
+                    article.media
+                        div.media-left
+                            figure.image.is-128x128
+                                img(src=maestro.imageUrl)
+                        div.media-content
+                            div.content
+                                h1.title.is-1= maestro.surname+" "+maestro.nickname+" "+maestro.name
+                                div.descriptionMaestro
+                                    ul
+                                        li
+                                            a.button(href=maestro.facebook target="_blank")= maestro.surname+"'s Facebook"
+                                        li
+                                            a.button(href=maestro.siteweb target="_blank")= maestro.surname+"'s website"
+                                        li
+                                            a.button(href=maestro.wikipedia target="_blank")= maestro.surname+"'s Wikipedia"
+
+        section.section    
+            h2.title.is-2=maestro.surname+" "+maestro.name+"'s "+type+" videos"
+            div.dropdown.is-hoverable.right
+                div.dropdown-trigger
+                    button.button.is-fullwidth.is-medium(aria-haspopup="true" aria-controls="dropdown-menu")
+                        span="Filter by "
+                        span.icon.is-small
+                        i.fas.fa-angle-down
+                div.dropdown-menu#dropdown-menu(role="menu")
+                    div.dropdown-content
+                        a.dropdown-item(href='/tango-maestros/'+maestro.slug+'/all/0')= "All"
+                        a.dropdown-item(href='/tango-maestros/'+maestro.slug+'/vals/0')= "Vals"
+                        a.dropdown-item(href='/tango-maestros/'+maestro.slug+'/milonga/0')= "Milongas"
+                        a.dropdown-item(href='/tango-maestros/'+maestro.slug+'/other/0')= "Others"
+
+            div.videosList.columns.is-multiline.is-mobile
+                each itemVideo in videos
+                    include includes/itemVideo.pug
+
+            if nbResults>=24
+                a.button(href='/tango-maestros/'+maestro.slug+'/'+type+'/'+offset)= "Next videos"
+
+
+    include includes/footer.pug
