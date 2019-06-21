@@ -1,3 +1,10 @@
+//Couleurs de bulma
+$primary:#cd6858;
+
+$button-background-color:$primary;
+$button-color:white;
+$button-hover-border-color:rgb(139, 139, 139);
+
 @import "../../node_modules/bulma/bulma.sass";
 $fa-font-path: "/webfonts";
 @import "../../node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss";
@@ -5,6 +12,36 @@ $fa-font-path: "/webfonts";
 @import "../../node_modules/@fortawesome/fontawesome-free/scss/regular.scss";
 @import "../../node_modules/@fortawesome/fontawesome-free/scss/solid.scss";
 @import "../../node_modules/@fortawesome/fontawesome-free/scss/v4-shims.scss";
+
+
+
+//mes couleurs
+$fondpage:#686260;
+$footer:rgb(29, 29, 29);
+
+
+
+.is-centered{
+    text-align:center;
+}
+
+.is-hidden{
+    display:none;
+}
+
+body {
+    background-color: $fondpage;
+  }
+
+.footer{
+    background-color: $footer;
+    color:white;
+}
+
+i{
+    margin-left:5px;
+    margin-right:5px;
+}
 
 .dropdown{
     margin-bottom:20px;
@@ -16,4 +53,23 @@ $fa-font-path: "/webfonts";
 
 li{
     list-style-type:none;
+}
+
+.bloc{
+    margin-top:30px;
+}
+
+
+.title{
+    color:white;
+}
+
+.card-content{
+    .title{
+        color:black;
+    }
+}
+
+p{
+    margin-bottom: 20px;
 }

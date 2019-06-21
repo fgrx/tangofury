@@ -14,18 +14,23 @@ html
                         i.fas.fa-angle-down
                 div.dropdown-menu#dropdown-menu(role="menu")
                     div.dropdown-content
-                        a.dropdown-item(href='/videos/0')= "All"
-                        a.dropdown-item(href='/videos/vals/0')= "Vals"
-                        a.dropdown-item(href='/videos/milonga/0')= "Milongas"
-                        a.dropdown-item(href='/videos/other/0')= "Others"
+                        a.dropdown-item(href='/tango-videos/all/0')= "All"
+                        a.dropdown-item(href='/tango-videos/vals/0')= "Vals"
+                        a.dropdown-item(href='/tango-videos/milonga/0')= "Milongas"
+                        a.dropdown-item(href='/tango-videos/other/0')= "Others"
 
             section
                 div.videosList.columns.is-multiline.is-mobile
                     each itemVideo,index in videos
                         include includes/itemVideo.pug
                 
-            if nbResults>=24
-                a.button(href="/videos"+"/"+type+"/"+offset)= "Next videos"
+                p.is-centered.buttons
+                    if offset>24
+                        a.button(href="/tango-videos"+"/"+type+"/"+(offset-48))
+                            <i class="fas fa-chevron-left"></i> previous videos
+                    if nbResults>=24
+                        a.button(href="/tango-videos"+"/"+type+"/"+offset)
+                            |Next videos <i class="fas fa-chevron-right"></i>
         
 
     include includes/footer.pug

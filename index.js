@@ -10,13 +10,15 @@ const bodyParser = require('body-parser')
 
 app.use(express.json());
 
+/*
 const middlewares = [
   //Necessaire pour faire du post de formulaire
   bodyParser.urlencoded()
 ]
 
 app.use(middlewares)
-
+*/
+app.use(bodyParser.urlencoded({extended : true}));
 
 app.set('view engine', 'pug');
 app.locals.moment = require('moment');
@@ -29,7 +31,14 @@ app.use(express.static(process.env.PWD + '/public'));
 app.get('/', async (req, res) => {
   let topVideos=await Videos.getTopVideos();
   let selections= await Selections.getSelections(6);
-  res.render('index', { title: 'Tango Fury', topVideos: topVideos,selections:selections})
+  res.render('index', { title: 'Watch the best tango performances', topVideos: topVideos,selections:selections})
+});
+
+//toutes les tops videos
+app.get('/top-tango-videos/:offset', async (req, res) => {
+  let videos= await Videos.getAllTopVideos(req.params.offset);
+  var nbResults=videos.length;
+  res.render('top-videos', { title: "Top tango videos",videos:videos,offset:parseInt(req.params.offset)+24,nbResults:nbResults})
 });
 
 //Page de séléction
@@ -46,12 +55,6 @@ app.get('/selections', async (req, res) => {
   res.render('selections-list', { title: "All Tango Fury's selections",selections:selections})
 });
 
-//page de videos
-app.get('/tango-videos/:offset', async (req, res) => {
-  let videos= await Videos.getVideos(null,null,req.params.offset);
-  var nbResults=videos.length;
-  res.render('videos', { title: "All tango videos", videos: videos,offset:parseInt(req.params.offset)+24,nbResults:nbResults})
-});
 
 //page de videos avec le type
 app.get('/tango-videos/:type/:offset', async (req, res) => {

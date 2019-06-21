@@ -1,0 +1,22 @@
+html
+  include includes/head.pug
+  body
+    include includes/menu.pug
+    section.section
+        div.container.padding
+            h1.title.is-1= title
+            section
+                div.videosList.columns.is-multiline.is-mobile
+                    each itemVideo,index in videos
+                        include includes/itemVideo.pug
+                
+                p.is-centered.buttons
+                    if offset>24
+                        a.button(href="/top-tango-videos/"+(offset-48))
+                            <i class="fas fa-chevron-left"></i> previous videos
+                    if nbResults>=24
+                        a.button(href="/top-tango-videos/"+offset)
+                            |Next videos <i class="fas fa-chevron-right"></i>
+        
+
+    include includes/footer.pug

@@ -1,7 +1,28 @@
 
-<footer>
-
-</footer>
+footer.footer
+    .container
+        section.section
+            .columns
+                .column.is-half
+                    h2.title.is-4= "Download the Android App"
+                    p
+                        |Tango Fury is available on the playstore ! Check it here :
+                    p
+                        a.button.is-large(href="https://play.google.com/store/apps/details?id=tango.fury")
+                            <i class="fab fa-google-play"></i> Tango Fury for Android
+                
+                .column.is-half
+                    h2.title.is-4= "Contact"
+                    p
+                        |Tango Fury is backed with love by Fabien Grignoux
+                    h3.title.is-5= "Follow me on"
+                    p.buttons 
+                        a.button(href='https://www.facebook.com/fabien.grignoux')
+                            <i class='fab fa-facebook-f'></i> Facebook
+                        a.button(href='https://www.linkedin.com/in/fabien-grignoux-3ab9a4167/')
+                            <i class="fab fa-linkedin-in"></i>linkedIn
+                        a.button(href='https://fgrx.netlify.com')
+                            <i class="fas fa-link"></i> My website
 
 script.
     document.addEventListener('DOMContentLoaded', () => {

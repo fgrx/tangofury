@@ -5,22 +5,28 @@ html
 
     section.section
       div.container.padding
+        section.header
+          .is-centered
+            img(src="/img/tangofury-inline.png")
+            h1.title= title
+        section.bloc
+          h2.title.is-2= "Top tango videos"
 
-        h1.title.is-1= title
-
-        section
-          h2.title.is-2= "Top videos"
-
-          div.videosList.columns.is-multiline
+          div.videosList.columns.is-multiline.is-mobile
               each itemVideo,index in topVideos
                 include includes/itemVideo.pug
 
-        section
-          h2.title.is-2= "Selections"
-            div.columns.selectionList.is-multiline
-              each itemSelection,index in selections
-                include includes/itemSelection.pug
-          a.button(href="selections")= "See all selections"
+          p.is-centered
+            a.button.is-medium(href="/top-tango-videos/0")= "See all top videos"
+
+        section.bloc
+          h2.title.is-2= "Tango Selections"
+
+          div.columns.selectionList.is-multiline.is-mobile
+            each itemSelection,index in selections
+              include includes/itemSelection.pug
+          p.is-centered
+            a.button.is-medium(href="/selections")= "See all selections"
         
 
     include includes/footer.pug
