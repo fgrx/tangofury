@@ -10,14 +10,6 @@ const bodyParser = require('body-parser')
 
 app.use(express.json());
 
-/*
-const middlewares = [
-  //Necessaire pour faire du post de formulaire
-  bodyParser.urlencoded()
-]
-
-app.use(middlewares)
-*/
 app.use(bodyParser.urlencoded({extended : true}));
 
 app.set('view engine', 'pug');
@@ -26,6 +18,8 @@ app.locals.moment = require('moment');
 //Gestions des assets
 process.env.PWD = process.cwd()
 app.use(express.static(process.env.PWD + '/public'));
+
+app.use(express.static(process.env.PWD + '/node_modules'));
 
 //Page d'accueil
 app.get('/', async (req, res) => {

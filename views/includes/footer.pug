@@ -14,7 +14,7 @@ footer.footer
                 .column.is-half
                     h2.title.is-4= "Contact"
                     p
-                        |Tango Fury is backed with love by Fabien Grignoux
+                        |Tango Fury is coded with love by Fabien Grignoux
                     h3.title.is-5= "Follow me on"
                     p.buttons 
                         a.button(href='https://www.facebook.com/fabien.grignoux')
@@ -48,8 +48,18 @@ script.
             });
         }
     });
-    
-script(src="/js/yall.js")
+
+
+
+script(src="/yall-js/dist/yall.min.js")
+script(src="/list.js/dist/list.min.js")
+
+script.
+    var options = {
+        valueNames: [ 'maestroName' ],
+        listClass: "myList"
+    };
+    var maestroList = new List('maestroList',options);
 
 script.
     document.addEventListener("DOMContentLoaded", yall);

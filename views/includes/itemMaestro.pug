@@ -1,4 +1,4 @@
-div.column.is-one-quarter-desktop.is-one-third-mobile
+div.column.is-2-desktop.is-one-third-mobile.is-3-tablet
     a(href="/tango-maestros/"+itemMaestro.slug+"/all/0")
         div.itemMaestro.card
             div.card-image
@@ -6,4 +6,8 @@ div.column.is-one-quarter-desktop.is-one-third-mobile
                     img.is-rounded.lazy(data-src=itemMaestro.urlImage src="/img/placeholder.png")
             div.card-content
                 div.content
-                    h3.title.is-5= itemMaestro.surname + " " + itemMaestro.nickname+" "+ itemMaestro.name
+                    if itemMaestro.nickname!= undefined
+                       -var maestroName= itemMaestro.surname+ " " + itemMaestro.nickname+" "+ itemMaestro.name
+                    else
+                       -var maestroName= itemMaestro.surname+ " " + itemMaestro.name
+                    h3.title.is-5.maestroName= maestroName
