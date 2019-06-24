@@ -13,6 +13,7 @@ getSelections=async function(limit=0){
             selection=snap.val();
             selection.imageUrl="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/selections%2F"+selection.image+"?alt=media";
             selection.key=snap.key;
+            selection.nbVideos=Object.keys(selection.videos).length;
             selections.push(selection);
         });
     }); 
@@ -26,6 +27,7 @@ getSelectionInfos=async function(key){
 
     await ref.once("value", async function(snapshot) {
         selection=snapshot.val();
+        selection.nbVideos=Object.keys(selection.videos).length;
         selection.imageUrl="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/selections%2F"+selection.image+"?alt=media";
     }); 
 
