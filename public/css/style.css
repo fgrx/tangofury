@@ -20266,4 +20266,10 @@ li {
 p {
   margin-bottom: 20px;
 }
+
+@media screen and (max-width: 640px) {
+  .title.is-2 {
+    font-size: 1.8rem;
+  }
+}
 /*# sourceMappingURL=style.css.map */

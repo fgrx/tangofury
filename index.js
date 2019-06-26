@@ -6,6 +6,9 @@ const Selections=require("./models/selections");
 const Maestros=require("./models/maestros");
 const Account=require("./models/account");
 
+// install Helmet et compression
+require("./prod")(app);
+
 const bodyParser = require('body-parser')
 
 app.use(express.json());
@@ -25,7 +28,7 @@ app.use(express.static(process.env.PWD + '/node_modules'));
 app.get('/', async (req, res) => {
   let topVideos=await Videos.getTopVideos();
   let selections= await Selections.getSelections(6);
-  res.render('index', { title: 'Watch the best tango performances', topVideos: topVideos,selections:selections})
+  res.render('index', { title: 'Watch the best tango performances',descriptionPage:"Discover new tango videos and maestros every day. Watch all the best tango performances", topVideos: topVideos,selections:selections})
 });
 
 //toutes les tops videos
@@ -62,7 +65,7 @@ app.get('/tango-videos/:type/:offset', async (req, res) => {
 //page de listing des maestros
 app.get('/tango-maestros', async (req, res) => {
   let maestros= await Maestros.getMaestros();
-  res.render('maestros-list',{title:"Tango maestros list",maestros:maestros})
+  res.render('maestros-list',{title:"Tango maestros list",maestros:maestros,descriptionPage:"List off all the most famous tango maestros"})
 });
 
 //Affichage d'un maestro
@@ -78,7 +81,8 @@ app.get('/tango-maestros/:slug/:type/:offset', async (req, res) => {
     type:req.params.type,
     typeDisplay:typeDisplay,
     offset:parseInt(req.params.offset)+24,
-    nbResults:nbResults
+    nbResults:nbResults,
+    descriptionPage:"watch all the best tango videos of "
   })
 });
 
@@ -86,7 +90,7 @@ app.get('/tango-maestros/:slug/:type/:offset', async (req, res) => {
 //Page de login
 app.get('/login', async (req, res) => {
   var failedLogin=req.query.login;
-  res.render('login',{title:"Connexion",failedAuth:failedLogin})
+  res.render('login',{title:"Connexion",failedAuth:failedLogin,descriptionPage:"please login to manage all your playlists and favorites maestros"})
 });
 
 //test de connexion
@@ -98,13 +102,30 @@ app.post('/connexion', async (req, res) => {
   if(testConnexion==false){
     res.redirect('login?login=false');
   }else{
+    var session = require('express-session');
+
+    var sess = {
+      secret: 'keyboard cat',
+      cookie: {}
+    }
+
+    app.set('trust proxy', 1);
+    app.use(session(sess));
+
     res.redirect('account');
   }
 });
 
 //Page de compte
 app.get('/account', async (req, res) => {
-  res.render('account',{title:"My account"})
+/*
+  if(!req.session.secret){
+    res.render('account',{title:"My account"})
+  }else{
+    res.redirect('login?login=false');
+  }
+  */
+ console.log(req.session);
 });
 
 const port = process.env.PORT || 3000;
