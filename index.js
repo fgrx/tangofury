@@ -9,7 +9,15 @@ const Account=require("./models/account");
 // install Helmet et compression
 require("./prod")(app);
 
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+
+//Gestion des sessions
+var cookieSession = require('cookie-session');
+app.set('trust proxy', 1);
+app.use(cookieSession({
+  name: 'furiaSession',
+  keys: ['key1', 'key2']
+}))
 
 app.use(express.json());
 
@@ -20,9 +28,9 @@ app.locals.moment = require('moment');
 
 //Gestions des assets
 process.env.PWD = process.cwd()
-app.use(express.static(process.env.PWD + '/public'));
+app.use(express.static(process.env.PWD + '/public', { maxAge: 2592000000 }));
 
-app.use(express.static(process.env.PWD + '/node_modules'));
+app.use(express.static(process.env.PWD + '/node_modules', { maxAge: 2592000000 }));
 
 //Page d'accueil
 app.get('/', async (req, res) => {
@@ -97,35 +105,22 @@ app.get('/login', async (req, res) => {
 app.post('/connexion', async (req, res) => {
   data=req.body;
   var testConnexion=await Account.checkConnexion(data.login,data.password);
-
-  console.log("testcon",testConnexion);
+ 
   if(testConnexion==false){
     res.redirect('login?login=false');
   }else{
-    var session = require('express-session');
-
-    var sess = {
-      secret: 'keyboard cat',
-      cookie: {}
-    }
-
-    app.set('trust proxy', 1);
-    app.use(session(sess));
-
+    req.session.userKey=testConnexion;
     res.redirect('account');
   }
 });
 
 //Page de compte
 app.get('/account', async (req, res) => {
-/*
-  if(!req.session.secret){
-    res.render('account',{title:"My account"})
+  if(req.session.userKey!=undefined){
+    res.render('account',{title:"My account",descriptionPage:"My personnal page"})
   }else{
     res.redirect('login?login=false');
   }
-  */
- console.log(req.session);
 });
 
 const port = process.env.PORT || 3000;
