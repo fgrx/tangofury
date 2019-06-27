@@ -8,4 +8,24 @@ html
       div.container.padding
         h1.title.is-1= title
 
+        section.bloc
+          h2.title.is-2= "Favorites maestros"
+          div.columns.maestros.is-multiline.is-mobile
+            each itemMaestro,index in topMaestros
+              include includes/itemMaestro.pug
+
+        section.bloc
+          .playlists
+            h2.title.is-2= "My playlists"
+            if playlists.nbVideos==0
+              p= "No playlist for now. Create your first one !"
+            else
+              nav.panel
+                p.panel-heading= "My playlists"
+                each playlist in playlists
+                  a.panel-block(href="/playlist/"+playlist.key)= playlist.title
+        
+        section.bloc
+          p.is-centered
+            a.button(href='/account/logout')= "Logout"
     include includes/footer.pug

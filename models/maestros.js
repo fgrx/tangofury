@@ -1,33 +1,92 @@
 const {db}= require('../config/db.js');
 
-async function getMaestros(){
+async function getMaestros(user=""){
     var arr=[];
+    var arrIndexTop=[];
+
+    if(user!=""){
+        arrIndexTop= await getTopMaestros(user,"key");
+    }
+    //console.log("arrIndexTop",arrIndexTop);
     await db.ref(`/maestros-infos`).once("value", async (querySnapshot) => {
         querySnapshot.forEach(function (doc) { 
             maestro=doc.val();
             var imageClear=doc.child("image").val().replace("2018/03/","").replace("2018/04/","").replace("/","");
             maestro.urlImage="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/maestros%2F"+imageClear+"?alt=media";
             maestro.videos=doc.child("videos").val();
+            if(user){
+                maestro.favorite=false;
+            }else{
+                maestro.favorite="noconnexion";
+            }
+            
+            maestro.key=doc.key;
+         
+            arrIndexTop.forEach(index=>{
+                if(index==maestro.key){
+                    maestro.favorite=true;
+                }
+            });
             arr.push(maestro);
           });
       });
-
     return arr;
 }
 
-async function getMaestro(slug){
-    var maestro;
-    await db.ref(`/maestros-infos`).orderByChild('slug').equalTo(slug).once("value", async(querySnapshot) => {
-        querySnapshot.forEach(function (doc) {
-            maestro=doc.val();
-            maestro.key=doc.key;
-            var imageClear=doc.child("image").val().replace("2018/03/","").replace("2018/04/","").replace("/","");
-            maestro.imageUrl="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/maestros%2F"+imageClear+"?alt=media";;
-            });
+async function getTopMaestros(user,mode=""){
+    var arrIndex=[];
+    var arr=[];
+
+    const req="/userProfile/"+user+"/maestros";
+    await db.ref(req).once("value", async (querySnapshot) => {
+        querySnapshot.forEach(function (doc) { 
+            var maestro=doc.val();
+            arrIndex.push(maestro);
+          });
+      });
+
+    if(mode=="key"){
+        return arrIndex;
+    }else{
+        for (let index of arrIndex) {
+            //console.log("index",index)
+            let maestro=await getMaestro("",index);
+            //console.log("maestro:",maestro);
+            arr.push(maestro);
         }
-    );
+
+        return arr;
+    }
+}
+
+
+async function getMaestro(slug="",key=""){
+    var maestro;
+    if(slug!=""){
+        await db.ref(`/maestros-infos`).orderByChild('slug').equalTo(slug).once("value", async(querySnapshot) => {
+            querySnapshot.forEach(function (doc) {
+                maestro=doc.val();
+                maestro.key=doc.key;
+                var imageClear=doc.child("image").val().replace("2018/03/","").replace("2018/04/","").replace("/","");
+                maestro.urlImage="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/maestros%2F"+imageClear+"?alt=media";;
+                });
+            }
+        );
+    }
+
+    if(key!=""){
+        await db.ref("/maestros-infos/"+key).once("value", querySnapshot => {
+                maestro=querySnapshot.val();
+                maestro.key=querySnapshot.key;
+                var imageClear=maestro.image.replace("2018/03/","").replace("2018/04/","").replace("/","");
+                maestro.urlImage="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/maestros%2F"+imageClear+"?alt=media";
+            }
+        );
+    }
+
     return(maestro);
 }
 
 exports.getMaestros = getMaestros;
 exports.getMaestro = getMaestro;
+exports.getTopMaestros= getTopMaestros;

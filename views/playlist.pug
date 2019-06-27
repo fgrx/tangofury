@@ -8,16 +8,12 @@ html
             header
                 div.box
                     article.media
-                        div.media-left
-                            figure.image.is-128x128
-                                img(src=selection.imageUrl alt="")
                         div.media-content
                             div.content
                                 h1.title.is-1= title
-                                div.descriptionSelection=selection.description
 
                 div.videosList.columns.is-multiline.is-mobile
-                    each itemVideo in selection.videos
+                    each itemVideo in playlist.videos
                         include includes/itemVideo.pug
 
 

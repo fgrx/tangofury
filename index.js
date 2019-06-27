@@ -5,6 +5,7 @@ const Videos = require("./models/videos");
 const Selections=require("./models/selections");
 const Maestros=require("./models/maestros");
 const Account=require("./models/account");
+const Playlist=require("./models/playlists");
 
 // install Helmet et compression
 require("./prod")(app);
@@ -72,7 +73,9 @@ app.get('/tango-videos/:type/:offset', async (req, res) => {
 
 //page de listing des maestros
 app.get('/tango-maestros', async (req, res) => {
-  let maestros= await Maestros.getMaestros();
+  var user="";
+  if(req.session.userKey!=undefined)user=req.session.userKey;
+  let maestros= await Maestros.getMaestros(user);
   res.render('maestros-list',{title:"Tango maestros list",maestros:maestros,descriptionPage:"List off all the most famous tango maestros"})
 });
 
@@ -117,7 +120,45 @@ app.post('/connexion', async (req, res) => {
 //Page de compte
 app.get('/account', async (req, res) => {
   if(req.session.userKey!=undefined){
-    res.render('account',{title:"My account",descriptionPage:"My personnal page"})
+    var playlists=await Playlist.getUserPlaylists(req.session.userKey);
+    var topMaestros= await Maestros.getTopMaestros(req.session.userKey);
+    res.render('account',{title:"My account",playlists:playlists,topMaestros:topMaestros,descriptionPage:"My personnal page"})
+  }else{
+    res.redirect('login?login=false');
+  }
+});
+
+//compte - ajouter un maestro
+app.get('/account/subscribe/:key', async (req, res) => {
+  if(req.session.userKey!=undefined){
+    Account.subscribeMaestro(req.params.key,req.session.userKey);
+    res.send("over");
+  }else{
+    res.redirect('login?login=false');
+  }
+});
+
+// compte - enlever un maestro
+app.get('/account/unsubscribe/:key', async (req, res) => {
+  if(req.session.userKey!=undefined){
+    Account.unsubscribeMaestro(req.params.key,req.session.userKey);
+    res.send("over");
+  }else{
+    res.redirect('login?login=false');
+  }
+});
+
+//Page de déconnexion
+app.get('/account/logout',(req,res)=>{
+  req.session=null;
+  res.redirect('/');
+});
+
+//page de playlist
+app.get('/playlist/:id', async (req, res) => {
+  if(req.session.userKey!=undefined){
+    var playlist=await Playlist.getPlaylist(req.session.userKey,req.params.id);
+    res.render('playlist',{title:playlist.title,playlist:playlist,descriptionPage:"Playlist page"})
   }else{
     res.redirect('login?login=false');
   }

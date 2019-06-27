@@ -53,13 +53,49 @@ script.
 
 script(src="/yall-js/dist/yall.min.js")
 script(src="/list.js/dist/list.min.js")
+script(src="/js/mediabox.min.js")
 
 script.
     var options = {
-        valueNames: [ 'maestroName' ],
+        valueNames: [ 'maestroName','maestroRole' ],
         listClass: "myList"
     };
     var maestroList = new List('maestroList',options);
 
 script.
     document.addEventListener("DOMContentLoaded", yall);
+
+script. 
+    MediaBox('.mediabox');
+
+script.
+    [].forEach.call(document.querySelectorAll('a.subscribeMaestro'), function(el) {
+        el.addEventListener('click', function(event) {
+            var maestro= this.dataset.maestro
+            var httpRequest = new XMLHttpRequest();
+            url="/account/subscribe/"+maestro;
+            httpRequest.onreadystatechange = function(data) {
+            };
+            httpRequest.open("GET", url);
+            httpRequest.send();
+
+            event.preventDefault();
+        })
+        
+    });
+
+
+    [].forEach.call(document.querySelectorAll('a.unsubscribeMaestro'), function(el) {
+        el.addEventListener('click', function(event) {
+            var maestro= this.dataset.maestro
+            var httpRequest = new XMLHttpRequest();
+            url="/account/unsubscribe/"+maestro;
+            httpRequest.onreadystatechange = function(data) {
+            };
+            httpRequest.open("GET", url);
+            httpRequest.send();
+
+            event.preventDefault();
+        })
+        
+    })
