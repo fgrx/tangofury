@@ -7,7 +7,7 @@ checkConnexion=function (login,password){
             if (err){
                 resolve(false);
             }else{
-                resolve(result.user.id);
+                resolve(result.user);
             }
          });
     });

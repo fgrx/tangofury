@@ -30,9 +30,8 @@ getAllTopVideos = async function (offset=0){
     return topVideos;
 }
 
-getVideos= async function (maestro,type,offset=0){
+getVideos= async function (maestro,type,offset=0,nbQueries=24){
     var videos=[];
-    var nbQueries=24;
     var limit =parseInt(offset)+nbQueries;
 
     if(maestro==null){
@@ -60,6 +59,20 @@ getVideos= async function (maestro,type,offset=0){
     return videos;
 }
 
+async function getDeletedVideos(){
+    var deletedVideos=Array();
+
+    const fnRef=db.ref("videos-deleted");
+    const querySnapshot= await fnRef.once("value");
+
+    querySnapshot.forEach(function (doc) {
+      deletedVideos.push(doc.val());
+    });
+    
+    return deletedVideos;
+  }
+
 exports.getTopVideos=getTopVideos;
 exports.getAllTopVideos=getAllTopVideos;
 exports.getVideos=getVideos;
+exports.getDeletedVideos=getDeletedVideos;

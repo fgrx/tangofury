@@ -13,7 +13,12 @@ $fa-font-path: "/webfonts";
 @import "../../node_modules/@fortawesome/fontawesome-free/scss/solid.scss";
 @import "../../node_modules/@fortawesome/fontawesome-free/scss/v4-shims.scss";
 
-
+/*
+@font-face {
+    font-family: "imogen-agnes";
+    src: url("../webfonts/imogen-agnes/OTF/ImogenAgnes.otf") format("opentype");
+}
+*/
 
 //mes couleurs
 $fondpage:#686260;
@@ -28,6 +33,14 @@ $footer:rgb(29, 29, 29);
 .is-hidden{
     display:none;
 }
+
+/*
+.fury{
+    font-family:'imogen-agnes','Roboto',sans-serif;
+    font-size:2em;
+    color:$primary;
+}
+*/
 
 body {
     background-color: $fondpage;
@@ -73,6 +86,21 @@ nav.panel{
         color:black;
     }
 }
+
+.cptVideos {
+    color:white;
+    position: absolute;
+    text-shadow: rgb(68, 68, 68) 1px 1px 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index:10;
+    font-weight:bold;
+    text-align:center;
+    .counterVideos{
+        font-size:2.3em;
+    }
+  }
 
 p{
     margin-bottom: 20px;

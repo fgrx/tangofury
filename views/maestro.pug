@@ -15,17 +15,23 @@ html
                             div.content
                                 h1.title.is-1= maestro.surname+" "+maestro.nickname+" "+maestro.name
                                 div.descriptionMaestro
-                                    ul
+                                    .buttons.are-small
                                         if maestro.facebook
-                                            li
-                                                a.button(href=maestro.facebook target="_blank")= maestro.surname+"'s Facebook"
+                                            a.button(href=maestro.facebook target="_blank")= maestro.surname+"'s Facebook"
                                         if maestro.siteweb
-                                            li
-                                                a.button(href=maestro.siteweb target="_blank")= maestro.surname+"'s website"
+                                            a.button(href=maestro.siteweb target="_blank")= maestro.surname+"'s website"
                                         if maestro.wikipedia
-                                            li
-                                                a.button(href=maestro.wikipedia target="_blank")= maestro.surname+"'s Wikipedia"
-
+                                            a.button(href=maestro.wikipedia target="_blank")= maestro.surname+"'s Wikipedia"
+                                
+                                    if maestro.favorite== true
+                                        a.unsubscribeMaestro.button(href="#" data-maestro=maestro.key)
+                                            i.fas.fa-trash-alt
+                                            |remove from favs
+                                
+                                    if maestro.favorite== false
+                                        a.subscribeMaestro.button(href="#" data-maestro=maestro.key)
+                                            i.fas.fa-star
+                                            |Add to Favs
         section.section    
             h2.title.is-2=maestro.surname+" "+maestro.name+"'s "+type+" videos"
             div.dropdown.is-hoverable.right

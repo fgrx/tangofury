@@ -71,6 +71,11 @@ script.
 script.
     [].forEach.call(document.querySelectorAll('a.subscribeMaestro'), function(el) {
         el.addEventListener('click', function(event) {
+            this.classList.add("is-hidden");
+            messageBox=document.createElement("div");
+            messageBox.classList.add("notification","is-small","is-success");
+            messageBox.innerHTML="<i class='fas fa-check'></i> Added to your favorites";
+            this.parentNode.insertBefore(messageBox,this);
             var maestro= this.dataset.maestro
             var httpRequest = new XMLHttpRequest();
             url="/account/subscribe/"+maestro;
@@ -78,7 +83,6 @@ script.
             };
             httpRequest.open("GET", url);
             httpRequest.send();
-
             event.preventDefault();
         })
         
@@ -87,6 +91,12 @@ script.
 
     [].forEach.call(document.querySelectorAll('a.unsubscribeMaestro'), function(el) {
         el.addEventListener('click', function(event) {
+            this.classList.add("is-hidden");
+            messageBox=document.createElement("div");
+            messageBox.classList.add("notification","is-small","is-success");
+            messageBox.innerHTML="<i class='fas fa-check'></i> Removed from your favorites";
+            this.parentNode.insertBefore(messageBox,this);
+
             var maestro= this.dataset.maestro
             var httpRequest = new XMLHttpRequest();
             url="/account/unsubscribe/"+maestro;
@@ -94,7 +104,6 @@ script.
             };
             httpRequest.open("GET", url);
             httpRequest.send();
-
             event.preventDefault();
         })
         

@@ -10,6 +10,15 @@ html
           .is-centered
             img(src="/img/tangofury-inline.png")
             h1.title= title
+
+        if topMaestros.length > 0 
+          section.bloc
+            h2.title.is-2= "Favorites maestros activity"
+            div.columns.maestros.is-multiline.is-mobile
+              each itemMaestro,index in topMaestros
+                if itemMaestro.videosToday > 0
+                  include includes/itemMaestro.pug
+
         section.bloc
           h2.title.is-2= "Top tango videos"
 

@@ -20217,6 +20217,12 @@ readers do not read off random characters that represent icons */
   font-weight: 400;
 }
 
+/*
+@font-face {
+    font-family: "imogen-agnes";
+    src: url("../webfonts/imogen-agnes/OTF/ImogenAgnes.otf") format("opentype");
+}
+*/
 .is-centered {
   text-align: center;
 }
@@ -20225,6 +20231,13 @@ readers do not read off random characters that represent icons */
   display: none;
 }
 
+/*
+.fury{
+    font-family:'imogen-agnes','Roboto',sans-serif;
+    font-size:2em;
+    color:$primary;
+}
+*/
 body {
   background-color: #686260;
 }
@@ -20265,6 +20278,23 @@ nav.panel {
 
 .card-content .title {
   color: black;
+}
+
+.cptVideos {
+  color: white;
+  position: absolute;
+  text-shadow: #444444 1px 1px 0;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  z-index: 10;
+  font-weight: bold;
+  text-align: center;
+}
+
+.cptVideos .counterVideos {
+  font-size: 2.3em;
 }
 
 p {

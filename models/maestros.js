@@ -14,11 +14,8 @@ async function getMaestros(user=""){
             var imageClear=doc.child("image").val().replace("2018/03/","").replace("2018/04/","").replace("/","");
             maestro.urlImage="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/maestros%2F"+imageClear+"?alt=media";
             maestro.videos=doc.child("videos").val();
-            if(user){
-                maestro.favorite=false;
-            }else{
-                maestro.favorite="noconnexion";
-            }
+            
+            user ? maestro.favorite=false : maestro.favorite="noconnexion";
             
             maestro.key=doc.key;
          
@@ -28,8 +25,8 @@ async function getMaestros(user=""){
                 }
             });
             arr.push(maestro);
-          });
-      });
+        });
+    });
     return arr;
 }
 
@@ -42,8 +39,8 @@ async function getTopMaestros(user,mode=""){
         querySnapshot.forEach(function (doc) { 
             var maestro=doc.val();
             arrIndex.push(maestro);
-          });
-      });
+        });
+    });
 
     if(mode=="key"){
         return arrIndex;
@@ -51,6 +48,7 @@ async function getTopMaestros(user,mode=""){
         for (let index of arrIndex) {
             //console.log("index",index)
             let maestro=await getMaestro("",index);
+            maestro.favorite=true;
             //console.log("maestro:",maestro);
             arr.push(maestro);
         }
@@ -60,8 +58,10 @@ async function getTopMaestros(user,mode=""){
 }
 
 
-async function getMaestro(slug="",key=""){
+async function getMaestro(slug="",key="",user=''){
     var maestro;
+    
+
     if(slug!=""){
         await db.ref(`/maestros-infos`).orderByChild('slug').equalTo(slug).once("value", async(querySnapshot) => {
             querySnapshot.forEach(function (doc) {
@@ -83,7 +83,17 @@ async function getMaestro(slug="",key=""){
             }
         );
     }
+    
+    user ? maestro.favorite=false : maestro.favorite="noconnexion";
 
+    if(user!=""){
+        arrIndexTop= await getTopMaestros(user,"key");
+        arrIndexTop.forEach(index=>{
+            if(index==maestro.key){
+                maestro.favorite=true;
+            }
+        });
+    }
     return(maestro);
 }
 

@@ -6,6 +6,7 @@ const Selections=require("./models/selections");
 const Maestros=require("./models/maestros");
 const Account=require("./models/account");
 const Playlist=require("./models/playlists");
+const Importer=require("./models/importer");
 
 // install Helmet et compression
 require("./prod")(app);
@@ -37,7 +38,8 @@ app.use(express.static(process.env.PWD + '/node_modules', { maxAge: 2592000000 }
 app.get('/', async (req, res) => {
   let topVideos=await Videos.getTopVideos();
   let selections= await Selections.getSelections(6);
-  res.render('index', { title: 'Watch the best tango performances',descriptionPage:"Discover new tango videos and maestros every day. Watch all the best tango performances", topVideos: topVideos,selections:selections})
+  const topMaestros= (req.session.userKey) ? await Maestros.getTopMaestros(req.session.userKey) : [];
+  res.render('index', { title: 'Watch the best tango performances',descriptionPage:"Discover new tango videos and maestros every day. Watch all the best tango performances",topMaestros:topMaestros, topVideos: topVideos,selections:selections})
 });
 
 //toutes les tops videos
@@ -81,7 +83,9 @@ app.get('/tango-maestros', async (req, res) => {
 
 //Affichage d'un maestro
 app.get('/tango-maestros/:slug/:type/:offset', async (req, res) => {
-  let maestro= await Maestros.getMaestro(req.params.slug);
+  var user="";
+  if(req.session.userKey!=undefined)user=req.session.userKey;
+  let maestro= await Maestros.getMaestro(req.params.slug,"",user);
   let videos= await Videos.getVideos(maestro,req.params.type,req.params.offset);
   var typeDisplay=req.params.type;
   if(typeDisplay=="all")typeDisplay="";
@@ -107,14 +111,21 @@ app.get('/login', async (req, res) => {
 //test de connexion
 app.post('/connexion', async (req, res) => {
   data=req.body;
-  var testConnexion=await Account.checkConnexion(data.login,data.password);
+  var UserConnected=await Account.checkConnexion(data.login,data.password);
  
-  if(testConnexion==false){
+  if(UserConnected==false){
     res.redirect('login?login=false');
   }else{
-    req.session.userKey=testConnexion;
+    req.session.userKey=UserConnected.id;
+    req.session.userMail=UserConnected.email;
     res.redirect('account');
   }
+});
+
+//Page de déconnexion
+app.get('/account/logout',(req,res)=>{
+  req.session=null;
+  res.redirect('/');
 });
 
 //Page de compte
@@ -148,17 +159,24 @@ app.get('/account/unsubscribe/:key', async (req, res) => {
   }
 });
 
-//Page de déconnexion
-app.get('/account/logout',(req,res)=>{
-  req.session=null;
-  res.redirect('/');
-});
+
 
 //page de playlist
 app.get('/playlist/:id', async (req, res) => {
   if(req.session.userKey!=undefined){
     var playlist=await Playlist.getPlaylist(req.session.userKey,req.params.id);
     res.render('playlist',{title:playlist.title,playlist:playlist,descriptionPage:"Playlist page"})
+  }else{
+    res.redirect('login?login=false');
+  }
+});
+
+
+//page d'imports
+app.get('/import', async (req, res) => {
+  if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
+    const imports=await Importer.import();
+    res.render('import',{title:"Videos importation",imports,descriptionPage:"Videos importation"})
   }else{
     res.redirect('login?login=false');
   }
