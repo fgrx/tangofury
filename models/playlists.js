@@ -1,8 +1,8 @@
 const {db}= require('../config/db.js');
 
-getUserPlaylists=async function(user){
+getUserPlaylists=async(userId)=>{
     var playlists=[];
-    ref = db.ref("/userProfile/"+user+"/playlists/");
+    ref = db.ref("/userProfile/"+userId+"/playlists/");
    
     await ref.once("value", async function(snapshot) {
         snapshot.forEach((snap)=>{
@@ -16,7 +16,7 @@ getUserPlaylists=async function(user){
     return playlists.reverse();
 }
 
-getPlaylist=async function(user,key){
+getPlaylist= (user)=>async(key)=>{
     ref = db.ref("/userProfile/"+user+"/playlists/"+key);
     var playlist=[];
 

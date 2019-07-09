@@ -38,7 +38,7 @@ app.use(express.static(process.env.PWD + '/node_modules', { maxAge: 2592000000 }
 app.get('/', async (req, res) => {
   let topVideos=await Videos.getTopVideos();
   let selections= await Selections.getSelections(6);
-  const topMaestros= (req.session.userKey) ? await Maestros.getTopMaestros(req.session.userKey) : [];
+  const topMaestros= (req.session.userKey) ? await Maestros.getTopMaestros(req.session.userKey)('') : [];
   res.render('index', { title: 'Watch the best tango performances',descriptionPage:"Discover new tango videos and maestros every day. Watch all the best tango performances",topMaestros:topMaestros, topVideos: topVideos,selections:selections})
 });
 
@@ -59,15 +59,15 @@ app.get('/selection/:key', async (req, res) => {
 
 //toutes les sélections
 app.get('/selections', async (req, res) => {
-  let selections= await Selections.getSelections();
+  let selections= await Selections.getSelections(0);
   res.render('selections-list', { title: "All Tango Fury's selections",selections:selections})
 });
 
 
 //page de videos avec le type
-app.get('/tango-videos/:type/:offset', async (req, res) => {
-  let videos= await Videos.getVideos(null,req.params.type,req.params.offset);
-  var nbResults=videos.length;
+app.get('/tango-videos/:type/:offset', async (req, res) => { 
+  let videos= await Videos.getVideos(null)(req.params.type)(req.params.offset)(24);
+  const nbResults=videos.length;
   res.render('videos', { title: req.params.type + " videos", videos: videos,offset:parseInt(req.params.offset)+24,type:req.params.type,nbResults:nbResults})
 });
 
@@ -85,8 +85,8 @@ app.get('/tango-maestros', async (req, res) => {
 app.get('/tango-maestros/:slug/:type/:offset', async (req, res) => {
   var user="";
   if(req.session.userKey!=undefined)user=req.session.userKey;
-  let maestro= await Maestros.getMaestro(req.params.slug,"",user);
-  let videos= await Videos.getVideos(maestro,req.params.type,req.params.offset);
+  let maestro= await Maestros.getMaestro(req.params.slug)("")(user);
+  let videos= await Videos.getVideos(maestro)(req.params.type)(req.params.offset)(24);
   var typeDisplay=req.params.type;
   if(typeDisplay=="all")typeDisplay="";
   var nbResults=videos.length;
@@ -111,7 +111,7 @@ app.get('/login', async (req, res) => {
 //test de connexion
 app.post('/connexion', async (req, res) => {
   data=req.body;
-  var UserConnected=await Account.checkConnexion(data.login,data.password);
+  var UserConnected=await Account.checkConnexion(data.login)(data.password);
  
   if(UserConnected==false){
     res.redirect('login?login=false');
@@ -123,7 +123,7 @@ app.post('/connexion', async (req, res) => {
 });
 
 //Page de déconnexion
-app.get('/account/logout',(req,res)=>{
+app.get('/logout',(req,res)=>{
   req.session=null;
   res.redirect('/');
 });
@@ -132,7 +132,7 @@ app.get('/account/logout',(req,res)=>{
 app.get('/account', async (req, res) => {
   if(req.session.userKey!=undefined){
     var playlists=await Playlist.getUserPlaylists(req.session.userKey);
-    var topMaestros= await Maestros.getTopMaestros(req.session.userKey);
+    var topMaestros= await Maestros.getTopMaestros(req.session.userKey)("");
     res.render('account',{title:"My account",playlists:playlists,topMaestros:topMaestros,descriptionPage:"My personnal page"})
   }else{
     res.redirect('login?login=false');
@@ -182,5 +182,5 @@ app.get('/import', async (req, res) => {
   }
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3007;
 app.listen(port, () => console.log(`Listening on port ${port}...`));

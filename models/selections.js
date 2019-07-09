@@ -1,6 +1,6 @@
 const {db}= require('../config/db.js');
 
-getSelections=async function(limit=0){
+getSelections=async(limit)=>{
     var selections=[];
     ref = db.ref("/userProfile/NbtwzggJpfYmu1rN4lqdCNBBSVu1/playlists/").orderByChild("selection").equalTo(true)
     
@@ -21,7 +21,7 @@ getSelections=async function(limit=0){
     return selections.reverse();
 }
 
-getSelectionInfos=async function(key){
+getSelectionInfos=async(key)=>{
     ref = db.ref("/userProfile/NbtwzggJpfYmu1rN4lqdCNBBSVu1/playlists/"+key);
     var selection=[];
 
@@ -33,9 +33,6 @@ getSelectionInfos=async function(key){
 
     return selection;
 }
-
-
-
 
 
 exports.getSelections = getSelections;

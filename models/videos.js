@@ -1,6 +1,6 @@
 const {db, firebase}= require('../config/db.js');
 
-getTopVideos = async function (){
+getTopVideos = async()=>{
     var topVideos=[];
     ref = db.ref("videos").orderByChild("topVideo").equalTo(1).limitToLast(12);
     await ref.once("value", async function(snapshot) {
@@ -12,7 +12,7 @@ getTopVideos = async function (){
     return topVideos.reverse();
 }
 
-getAllTopVideos = async function (offset=0){
+getAllTopVideos = async(offset)=>{
     var topVideos=[];
 
     var nbQueries=24;
@@ -30,7 +30,7 @@ getAllTopVideos = async function (offset=0){
     return topVideos;
 }
 
-getVideos= async function (maestro,type,offset=0,nbQueries=24){
+getVideos= (maestro)=>(type)=>(offset)=>async(nbQueries)=>{
     var videos=[];
     var limit =parseInt(offset)+nbQueries;
 
@@ -47,8 +47,8 @@ getVideos= async function (maestro,type,offset=0,nbQueries=24){
             var fb=db.ref("maestros/"+maestro.key +"/videos").orderByChild("type").equalTo(type).limitToLast(limit);
         }
     }
-     
-    await fb.once("value",async function(snapshot) {
+
+    await fb.once("value",(snapshot) =>{
         snapshot.forEach((snap)=>{
             videos.push(snap.val());
         });
@@ -59,7 +59,7 @@ getVideos= async function (maestro,type,offset=0,nbQueries=24){
     return videos;
 }
 
-async function getDeletedVideos(){
+ getDeletedVideos=async()=>{
     var deletedVideos=Array();
 
     const fnRef=db.ref("videos-deleted");
