@@ -1,7 +1,7 @@
 const {db}= require('../config/db.js');
 
 getSelections=async(limit)=>{
-    var selections=[];
+    let selections=[];
     ref = db.ref("/userProfile/NbtwzggJpfYmu1rN4lqdCNBBSVu1/playlists/").orderByChild("selection").equalTo(true)
     
     if(limit>0){

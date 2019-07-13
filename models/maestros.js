@@ -1,6 +1,6 @@
 const {db}= require('../config/db.js');
 
-getMaestros= async(user)=>{
+getMaestros= (user)=>{
     return new Promise(async(resolve)=>{
         var arr=[];
         var arrIndexTop=[];
@@ -12,7 +12,7 @@ getMaestros= async(user)=>{
         db.ref(`/maestros-infos`).orderByChild("videosToday").once("value", querySnapshot => {
             querySnapshot.forEach(function (doc) { 
                 maestro=doc.val();
-                var imageClear=doc.child("image").val().replace("2018/03/","").replace("2018/04/","").replace("/","");
+                const imageClear=doc.child("image").val().replace("2018/03/","").replace("2018/04/","").replace("/","");
                 maestro.urlImage="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/maestros%2F"+imageClear+"?alt=media";
                 maestro.videos=doc.child("videos").val();
                 
@@ -21,9 +21,7 @@ getMaestros= async(user)=>{
                 maestro.key=doc.key;
              
                 arrIndexTop.forEach(index=>{
-                    if(index==maestro.key){
-                        maestro.favorite=true;
-                    }
+                    if(index==maestro.key)maestro.favorite=true;
                 });
                 arr.push(maestro);
             });
@@ -35,13 +33,13 @@ getMaestros= async(user)=>{
 }
 
 getTopMaestros=(user)=>async(mode)=>{
-    var arrIndex=[];
-    var arr=[];
+    let arrIndex=[];
+    let arr=[];
 
     const req="/userProfile/"+user+"/maestros";
     await db.ref(req).once("value", async (querySnapshot) => {
-        querySnapshot.forEach(function (doc) { 
-            var maestro=doc.val();
+        querySnapshot.forEach(doc=>{ 
+            let maestro=doc.val();
             arrIndex.push(maestro);
         });
     });
@@ -49,30 +47,29 @@ getTopMaestros=(user)=>async(mode)=>{
     if(mode=="key"){
         return arrIndex;
     }else{
-
-        for (let index of arrIndex) {
-            //console.log("index",index)
+       await Promise.all(
+        arrIndex.map(async(index)=>{
             let maestro=await getMaestro("")(index)("");
             maestro.favorite=true;
-            //console.log("maestro:",maestro);
             arr.push(maestro);
-        }
-        const resultArr=arr.sort((a,b)=>a.videosToday > b.videosToday).reverse();
-        return resultArr;
+        })
+       );
+
+        return arr.sort((a,b)=>a.videosToday > b.videosToday).reverse();
     }
 }
 
 
-getMaestro=(slug)=>(key)=>async(user)=>{
+getMaestro=(slug)=>(key)=>(user)=>{
     return new Promise(async(resolve)=>{
-        var maestro;
+        let maestro;
     
         if(slug!=""){
             await db.ref(`/maestros-infos`).orderByChild('slug').equalTo(slug).once("value", async(querySnapshot) => {
                 querySnapshot.forEach(function (doc) {
                     maestro=doc.val();
                     maestro.key=doc.key;
-                    var imageClear=doc.child("image").val().replace("2018/03/","").replace("2018/04/","").replace("/","");
+                    const imageClear=doc.child("image").val().replace("2018/03/","").replace("2018/04/","").replace("/","");
                     maestro.urlImage="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/maestros%2F"+imageClear+"?alt=media";;
                     });
                 }
@@ -102,8 +99,6 @@ getMaestro=(slug)=>(key)=>async(user)=>{
         resolve (maestro);
     
     });
-
-    
 }
 
 exports.getMaestros = getMaestros;

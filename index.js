@@ -45,7 +45,7 @@ app.get('/', async (req, res) => {
 //toutes les tops videos
 app.get('/top-tango-videos/:offset', async (req, res) => {
   let videos= await Videos.getAllTopVideos(req.params.offset);
-  var nbResults=videos.length;
+  let nbResults=videos.length;
   res.render('top-videos', { title: "Top tango videos",videos:videos,offset:parseInt(req.params.offset)+24,nbResults:nbResults})
 });
 
@@ -66,7 +66,7 @@ app.get('/selections', async (req, res) => {
 
 //page de videos avec le type
 app.get('/tango-videos/:type/:offset', async (req, res) => { 
-  let videos= await Videos.getVideos(null)(req.params.type)(req.params.offset)(24);
+  const videos= await Videos.getVideos(null)(req.params.type)(req.params.offset)(24);
   const nbResults=videos.length;
   res.render('videos', { title: req.params.type + " videos", videos: videos,offset:parseInt(req.params.offset)+24,type:req.params.type,nbResults:nbResults})
 });
@@ -75,21 +75,21 @@ app.get('/tango-videos/:type/:offset', async (req, res) => {
 
 //page de listing des maestros
 app.get('/tango-maestros', async (req, res) => {
-  var user="";
+  let user="";
   if(req.session.userKey!=undefined)user=req.session.userKey;
-  let maestros= await Maestros.getMaestros(user);
+  const maestros= await Maestros.getMaestros(user);
   res.render('maestros-list',{title:"Tango maestros list",maestros:maestros,descriptionPage:"List off all the most famous tango maestros"})
 });
 
 //Affichage d'un maestro
 app.get('/tango-maestros/:slug/:type/:offset', async (req, res) => {
-  var user="";
+  let user="";
   if(req.session.userKey!=undefined)user=req.session.userKey;
   let maestro= await Maestros.getMaestro(req.params.slug)("")(user);
-  let videos= await Videos.getVideos(maestro)(req.params.type)(req.params.offset)(24);
-  var typeDisplay=req.params.type;
+  const videos= await Videos.getVideos(maestro)(req.params.type)(req.params.offset)(24);
+  let typeDisplay=req.params.type;
   if(typeDisplay=="all")typeDisplay="";
-  var nbResults=videos.length;
+  const nbResults=videos.length;
   res.render('maestro',{
     title:maestro.surname+" "+maestro.name ,
     maestro:maestro,videos:videos,
@@ -104,14 +104,14 @@ app.get('/tango-maestros/:slug/:type/:offset', async (req, res) => {
 
 //Page de login
 app.get('/login', async (req, res) => {
-  var failedLogin=req.query.login;
+  const failedLogin=req.query.login;
   res.render('login',{title:"Connexion",failedAuth:failedLogin,descriptionPage:"please login to manage all your playlists and favorites maestros"})
 });
 
 //test de connexion
 app.post('/connexion', async (req, res) => {
   data=req.body;
-  var UserConnected=await Account.checkConnexion(data.login)(data.password);
+  const UserConnected=await Account.checkConnexion(data.login)(data.password);
  
   if(UserConnected==false){
     res.redirect('login?login=false');
@@ -131,8 +131,8 @@ app.get('/logout',(req,res)=>{
 //Page de compte
 app.get('/account', async (req, res) => {
   if(req.session.userKey!=undefined){
-    var playlists=await Playlist.getUserPlaylists(req.session.userKey);
-    var topMaestros= await Maestros.getTopMaestros(req.session.userKey)("");
+    const playlists=await Playlist.getUserPlaylists(req.session.userKey);
+    const topMaestros= await Maestros.getTopMaestros(req.session.userKey)("");
     res.render('account',{title:"My account",playlists:playlists,topMaestros:topMaestros,descriptionPage:"My personnal page"})
   }else{
     res.redirect('login?login=false');
@@ -164,7 +164,7 @@ app.get('/account/unsubscribe/:key', async (req, res) => {
 //page de playlist
 app.get('/playlist/:id', async (req, res) => {
   if(req.session.userKey!=undefined){
-    var playlist=await Playlist.getPlaylist(req.session.userKey,req.params.id);
+    const playlist=await Playlist.getPlaylist(req.session.userKey,req.params.id);
     res.render('playlist',{title:playlist.title,playlist:playlist,descriptionPage:"Playlist page"})
   }else{
     res.redirect('login?login=false');
@@ -182,5 +182,5 @@ app.get('/import', async (req, res) => {
   }
 });
 
-const port = process.env.PORT || 3007;
+const port = process.env.PORT || 3006;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
