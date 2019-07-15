@@ -12,3 +12,14 @@ div.column.is-one-quarter-desktop.is-half-mobile.is-3-tablet
                             =  "tango " + moment(itemVideo.datePublication).format("YYYY/MM/DD")
                         else
                             = itemVideo.type + " " + moment(itemVideo.datePublication).format("YYYY/MM/DD")
+                    if(role=="admin")
+                        .admin
+                            if(itemVideo.topVideo==1)
+                                a.setTopVideo.button(href="#" data-video=itemVideo.key data-mode=0)
+                                    i.fas.fa-trash
+                                    |Remove from top videos   
+                            else
+                                a.setTopVideo.button(href="#" data-video=itemVideo.key data-mode=1)
+                                    i.fas.fa-star
+                                    |Add to top videos
+                                                           

@@ -69,6 +69,7 @@ getMaestro=(slug)=>(key)=>(user)=>{
                 querySnapshot.forEach(function (doc) {
                     maestro=doc.val();
                     maestro.key=doc.key;
+                    if(maestro.nickname==undefined)maestro.nickname="";
                     const imageClear=doc.child("image").val().replace("2018/03/","").replace("2018/04/","").replace("/","");
                     maestro.urlImage="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/maestros%2F"+imageClear+"?alt=media";;
                     });

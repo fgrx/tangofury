@@ -38,8 +38,11 @@ app.use(express.static(process.env.PWD + '/node_modules', { maxAge: 2592000000 }
 app.get('/', async (req, res) => {
   let topVideos=await Videos.getTopVideos();
   let selections= await Selections.getSelections(6);
+  let role="";
+  if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com")role="admin";
+
   const topMaestros= (req.session.userKey) ? await Maestros.getTopMaestros(req.session.userKey)('') : [];
-  res.render('index', { title: 'Watch the best tango performances',descriptionPage:"Discover new tango videos and maestros every day. Watch all the best tango performances",topMaestros:topMaestros, topVideos: topVideos,selections:selections})
+  res.render('index', { title: 'Watch the best tango performances',descriptionPage:"Discover new tango videos and maestros every day. Watch all the best tango performances",topMaestros:topMaestros, topVideos: topVideos,selections:selections,role:role})
 });
 
 //toutes les tops videos
@@ -68,8 +71,30 @@ app.get('/selections', async (req, res) => {
 app.get('/tango-videos/:type/:offset', async (req, res) => { 
   const videos= await Videos.getVideos(null)(req.params.type)(req.params.offset)(24);
   const nbResults=videos.length;
-  res.render('videos', { title: req.params.type + " videos", videos: videos,offset:parseInt(req.params.offset)+24,type:req.params.type,nbResults:nbResults})
+  let role="";
+  if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com")role="admin";
+  res.render('videos', { title: req.params.type + " videos", videos: videos,offset:parseInt(req.params.offset)+24,type:req.params.type,nbResults:nbResults,role:role})
 });
+
+//Change le type de video
+app.get('/tango-videos/change-type/:video/:type', async (req, res) => {
+  if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
+    const videos=await Videos.changeType(req.params.video,req.params.type);
+    res.send("over");
+  }else{
+    res.redirect('login?login=false');
+  }
+})
+
+//Set video as top video
+app.get('/tango-videos/set-top/:video/:mode', (req, res) => {
+  if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
+    const videos=Videos.setTopVideos(req.params.video)(req.params.mode);
+    res.send("over");
+  }else{
+    res.redirect('login?login=false');
+  }
+})
 
 //Maestros
 

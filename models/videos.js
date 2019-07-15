@@ -5,7 +5,9 @@ getTopVideos = async()=>{
     ref = db.ref("videos").orderByChild("topVideo").equalTo(1).limitToLast(12);
     await ref.once("value", async function(snapshot) {
         snapshot.forEach((snap)=>{
-            topVideos.push(snap.val());
+            let videoArray=snap.val();
+            videoArray.key=snap.key;
+            topVideos.push(videoArray);
         });
     }); 
     
@@ -48,30 +50,47 @@ getVideos= (maestro)=>(type)=>(offset)=>(nbQueries)=>{
     
         await fb.once("value",(snapshot) =>{
             snapshot.forEach((snap)=>{
-                videos.push(snap.val());
+                let videoArray=snap.val();
+                videoArray.key=snap.key;
+                videos.push(videoArray);
             });
             videos.reverse();
             videos.splice(0, offset);
         }); 
-    
         resolve(videos);
     });  
 }
 
- getDeletedVideos=async()=>{
+getDeletedVideos=async()=>{
     let deletedVideos=Array();
 
     const fnRef=db.ref("videos-deleted");
     const querySnapshot= await fnRef.once("value");
 
     querySnapshot.forEach(function (doc) {
-      deletedVideos.push(doc.val());
+        deletedVideos.push(doc.val());
     });
-    
+
     return deletedVideos;
-  }
+}
+
+setTopVideos=(videoKey)=>(mode)=>{
+    db.ref(`/videos/${videoKey}`).once("value")
+    .then((doc) => {
+            let video=doc.val();
+            video.topVideo=parseInt(mode);
+            console.log(video);
+            return db.ref(`/videos/${videoKey}`).set(video);
+    });
+}
+
+changeVideoType=(videoKey)=>(type)=>{
+
+}
 
 exports.getTopVideos=getTopVideos;
 exports.getAllTopVideos=getAllTopVideos;
 exports.getVideos=getVideos;
 exports.getDeletedVideos=getDeletedVideos;
+exports.setTopVideos=setTopVideos;
+exports.changeVideoType=changeVideoType;

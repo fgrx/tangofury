@@ -108,3 +108,24 @@ script.
         })
         
     })
+
+script.
+    [].forEach.call(document.querySelectorAll('a.setTopVideo'), function(el) {
+        el.addEventListener('click', function(event) {
+            this.classList.add("is-hidden");
+            messageBox=document.createElement("div");
+            messageBox.classList.add("notification","is-small","is-success");
+            messageBox.innerHTML="<i class='fas fa-check'></i> Added to top videos";
+            this.parentNode.insertBefore(messageBox,this);
+            const mode= this.dataset.mode;
+            const video= this.dataset.video;
+            let httpRequest = new XMLHttpRequest();
+            const url=`/tango-videos/set-top/${video}/${mode}`;
+            httpRequest.onreadystatechange = function(data) {
+            };
+            httpRequest.open("GET", url);
+            httpRequest.send();
+            event.preventDefault();
+        })
+        
+    });

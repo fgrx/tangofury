@@ -1,7 +1,7 @@
 const {db}= require('../config/db.js');
 
 getUserPlaylists=async(userId)=>{
-    var playlists=[];
+    let playlists=[];
     ref = db.ref("/userProfile/"+userId+"/playlists/");
    
     await ref.once("value", async function(snapshot) {
