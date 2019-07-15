@@ -1,4 +1,5 @@
 const {db, firebase}= require('../config/db.js');
+const Maestros=require("./maestros");
 
 getTopVideos = async()=>{
     var topVideos=[];
@@ -79,13 +80,33 @@ setTopVideos=(videoKey)=>(mode)=>{
     .then((doc) => {
             let video=doc.val();
             video.topVideo=parseInt(mode);
-            console.log(video);
             return db.ref(`/videos/${videoKey}`).set(video);
     });
 }
 
-changeVideoType=(videoKey)=>(type)=>{
+changeVideoType=(videoKey)=>(typeVideo)=>{
+    //Dans le général
+    db.ref(`/videos/${videoKey}`).once("value")
+    .then(async(doc) => {
+        let video=doc.val();
+        video.type=typeVideo;
 
+        const maestroList=await Maestros.getMaestros("");
+        maestroList.forEach(maestro => {
+            db
+                .ref("maestros/"+maestro.key+"/videos")
+                .orderByChild("youtubeId")
+                .equalTo(video.youtubeId)
+                .once("value")
+                .then((querySnapshot) => {
+                    querySnapshot.forEach(function (doc) {
+                        firebase.database().ref("maestros/"+maestro.key+"/videos"+"/"+doc.key).set(video);
+                    });
+                });
+        });
+
+        return db.ref(`/videos/${videoKey}`).set(video);
+    });
 }
 
 exports.getTopVideos=getTopVideos;

@@ -77,9 +77,9 @@ app.get('/tango-videos/:type/:offset', async (req, res) => {
 });
 
 //Change le type de video
-app.get('/tango-videos/change-type/:video/:type', async (req, res) => {
+app.get('/tango-videos/change-type/:video/:type', (req, res) => {
   if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
-    const videos=await Videos.changeType(req.params.video,req.params.type);
+    const result=Videos.changeVideoType(req.params.video)(req.params.type);
     res.send("over");
   }else{
     res.redirect('login?login=false');
@@ -89,7 +89,7 @@ app.get('/tango-videos/change-type/:video/:type', async (req, res) => {
 //Set video as top video
 app.get('/tango-videos/set-top/:video/:mode', (req, res) => {
   if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
-    const videos=Videos.setTopVideos(req.params.video)(req.params.mode);
+    const result=Videos.setTopVideos(req.params.video)(req.params.mode);
     res.send("over");
   }else{
     res.redirect('login?login=false');

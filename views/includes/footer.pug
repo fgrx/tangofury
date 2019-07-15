@@ -69,6 +69,7 @@ script.
     MediaBox('.mediabox');
 
 script.
+    //Gestion de l'abonnement au maestro
     [].forEach.call(document.querySelectorAll('a.subscribeMaestro'), function(el) {
         el.addEventListener('click', function(event) {
             this.classList.add("is-hidden");
@@ -110,17 +111,43 @@ script.
     })
 
 script.
+    //Gestion de l'ajout et suppression des top vidéos
     [].forEach.call(document.querySelectorAll('a.setTopVideo'), function(el) {
         el.addEventListener('click', function(event) {
             this.classList.add("is-hidden");
             messageBox=document.createElement("div");
             messageBox.classList.add("notification","is-small","is-success");
-            messageBox.innerHTML="<i class='fas fa-check'></i> Added to top videos";
-            this.parentNode.insertBefore(messageBox,this);
             const mode= this.dataset.mode;
+            const addRemove=mode==1?"Added to":"Removed from"
+            messageBox.innerHTML=`<i class='fas fa-check'></i> ${addRemove} top videos`;
+            this.parentNode.insertBefore(messageBox,this);
             const video= this.dataset.video;
             let httpRequest = new XMLHttpRequest();
             const url=`/tango-videos/set-top/${video}/${mode}`;
+            httpRequest.onreadystatechange = function(data) {
+            };
+            httpRequest.open("GET", url);
+            httpRequest.send();
+            event.preventDefault();
+        })
+        
+    });
+
+script.
+    //Gestion du typage des vidéos
+    [].forEach.call(document.querySelectorAll('a.typeVideo'), function(el) {
+       
+        el.addEventListener('click', function(event) {
+            this.classList.add("is-hidden");
+            messageBox=document.createElement("div");
+            messageBox.classList.add("notification","is-small","is-success");
+            const typeOfVideo= this.dataset.type;
+            messageBox.innerHTML=`<i class='fas fa-check'></i> Type changed to : ${typeOfVideo}`;
+            //this.parentNode.insertBefore(messageBox,this);
+            const video= this.dataset.video;
+            let httpRequest = new XMLHttpRequest();
+            
+            const url=`/tango-videos/change-type/${video}/${typeOfVideo}`;
             httpRequest.onreadystatechange = function(data) {
             };
             httpRequest.open("GET", url);

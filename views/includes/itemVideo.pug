@@ -15,11 +15,27 @@ div.column.is-one-quarter-desktop.is-half-mobile.is-3-tablet
                     if(role=="admin")
                         .admin
                             if(itemVideo.topVideo==1)
-                                a.setTopVideo.button(href="#" data-video=itemVideo.key data-mode=0)
+                                a.setTopVideo.button.is-small(href="#" data-video=itemVideo.key data-mode=0)
                                     i.fas.fa-trash
                                     |Remove from top videos   
                             else
-                                a.setTopVideo.button(href="#" data-video=itemVideo.key data-mode=1)
+                                a.setTopVideo.button.is-small(href="#" data-video=itemVideo.key data-mode=1)
                                     i.fas.fa-star
                                     |Add to top videos
-                                                           
+                        
+                        div.dropdown.is-hoverable.right
+                            div.dropdown-trigger
+                                button.button.is-fullwidth.is-small(aria-haspopup="true" aria-controls="dropdown-menu")
+                                    span.icon.is-small
+                                    i.fas.fa-folder
+                                    span= "Type"
+                                    span.icon.is-small
+                                    i.fas.fa-angle-down(aria-hidden="true")
+                            div.dropdown-menu#dropdown-menu(role="menu")
+                                div.dropdown-content
+                                    a.dropdown-item.typeVideo(href="#" data-type=null)= ""
+                                    a.dropdown-item.typeVideo(href="#" data-type="tango" data-video=itemVideo.key)= "Tango"   
+                                    a.dropdown-item.typeVideo(href="#" data-type="vals" data-video=itemVideo.key)= "Vals"   
+                                    a.dropdown-item.typeVideo(href="#" data-type="milonga" data-video=itemVideo.key)= "Milonga"
+                                    a.dropdown-item.typeVideo(href="#" data-type="other" data-video=itemVideo.key)= "Other"
+
