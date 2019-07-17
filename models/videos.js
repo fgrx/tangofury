@@ -37,13 +37,15 @@ getVideos= (maestro)=>(type)=>(offset)=>(nbQueries)=>{
     
         if(maestro==null){
             if(type=="all"){
-                var fb=db.ref(`/videos`).orderByChild("datePublication").limitToLast(limit);
+                //var fb=db.ref(`/videos`).orderByChild("datePublication").limitToLast(limit);
+                var fb=db.ref(`/videos`).orderByChild("dateAdd").limitToLast(limit);
             }else{
                 var fb=db.ref(`/videos`).orderByChild("type").equalTo(type).limitToLast(limit);
             }
         }else{
             if(type=="all"){
-                var fb=db.ref("maestros/"+maestro.key +"/videos").orderByChild("datePublication").limitToLast(limit);
+                //var fb=db.ref("maestros/"+maestro.key +"/videos").orderByChild("datePublication").limitToLast(limit);
+                var fb=db.ref("maestros/"+maestro.key +"/videos").orderByChild("dateAdd").limitToLast(limit);
             }else{
                 var fb=db.ref("maestros/"+maestro.key +"/videos").orderByChild("type").equalTo(type).limitToLast(limit);
             }
