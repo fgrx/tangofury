@@ -115,6 +115,8 @@ app.get('/tango-maestros/:slug/:type/:offset', async (req, res) => {
   let typeDisplay=req.params.type;
   if(typeDisplay=="all")typeDisplay="";
   const nbResults=videos.length;
+  let role="";
+  if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com")role="admin";
   res.render('maestro',{
     title:maestro.surname+" "+maestro.name ,
     maestro:maestro,videos:videos,
@@ -122,7 +124,8 @@ app.get('/tango-maestros/:slug/:type/:offset', async (req, res) => {
     typeDisplay:typeDisplay,
     offset:parseInt(req.params.offset)+24,
     nbResults:nbResults,
-    descriptionPage:"watch all the best tango videos of "
+    descriptionPage:"watch all the best tango videos of ",
+    role:role
   })
 });
 
