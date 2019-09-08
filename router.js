@@ -121,13 +121,12 @@ module.exports=(app)=>{
 
         if(UserConnected==false){
             let target="";
-            if(page!==undefined)target="&page="+page;
+            if(page!==undefined && page!="" )target="&page="+page;
             res.redirect('login?login=false'+target);
         }else{
             req.session.userKey=UserConnected.id;
             req.session.userMail=UserConnected.email;
-
-            if(page!==undefined){
+            if(page!==undefined && page!=""){
                 res.redirect(page);
             }else{
                 res.redirect('account');
