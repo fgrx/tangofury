@@ -111,7 +111,7 @@ script.
     })
 
 script.
-    //Gestion de l'ajout et suppression des top vidéos
+    //Gestion des top vidéos
     [].forEach.call(document.querySelectorAll('a.setTopVideo'), function(el) {
         el.addEventListener('click', function(event) {
             this.classList.add("is-hidden");
@@ -129,6 +129,30 @@ script.
             httpRequest.open("GET", url);
             httpRequest.send();
             event.preventDefault();
+        })
+        
+    });
+
+script.
+    //Gestion de la suppression vidéos
+    [].forEach.call(document.querySelectorAll('a.deleteVideo'), function(el) {
+        el.addEventListener('click', function(event) {
+        
+            if(window.confirm("Are you sure you want to delete this video ? ")){
+                this.parentNode.parentNode.parentNode.parentNode.remove();
+                
+                const video= this.dataset.video;
+
+                let httpRequest = new XMLHttpRequest();
+                const url=`/delete-video/${video}`;
+
+                httpRequest.onreadystatechange = function(data) {
+                };
+                httpRequest.open("GET", url);
+                httpRequest.send();
+                event.preventDefault();
+            }
+            
         })
         
     });

@@ -33,8 +33,10 @@ getAllTopVideos = async(offset)=>{
 getVideos= (maestro)=>(type)=>(offset)=>(nbQueries)=>{
     return new Promise(async(resolve)=>{
         let videos=[];
-        const limit =parseInt(offset)+nbQueries;
-    
+        var testOffset=parseInt(offset);
+        if(isNaN(testOffset))testOffset=0;
+
+        const limit =testOffset+nbQueries;
         if(maestro==null){
             if(type=="all"){
                 //var fb=db.ref(`/videos`).orderByChild("datePublication").limitToLast(limit);
@@ -62,6 +64,27 @@ getVideos= (maestro)=>(type)=>(offset)=>(nbQueries)=>{
         }); 
         resolve(videos);
     });  
+}
+
+deleteVideo=async(videoKey)=>{
+    //delete video from maestros
+    const maestroList=await Maestros.getMaestros("");
+    maestroList.forEach(maestro => {
+        db
+        .ref("maestros/"+maestro.key+"/videos")
+        .orderByChild("youtubeId")
+        .equalTo(videoKey)
+        .once("value")
+        .then((querySnapshot) => {
+            querySnapshot.forEach(function (doc) {
+                db.ref("maestros/"+maestro.key+"/videos/"+doc.key).set(null);
+            });
+        });
+    });
+
+    //delete from general
+    db.ref("videos/"+videoKey).set(null);
+    db.ref(`/videos-deleted/`).push(videoKey);
 }
 
 getDeletedVideos=async()=>{
@@ -114,6 +137,7 @@ changeVideoType=(videoKey)=>(typeVideo)=>{
 exports.getTopVideos=getTopVideos;
 exports.getAllTopVideos=getAllTopVideos;
 exports.getVideos=getVideos;
+exports.deleteVideo=deleteVideo;
 exports.getDeletedVideos=getDeletedVideos;
 exports.setTopVideos=setTopVideos;
 exports.changeVideoType=changeVideoType;

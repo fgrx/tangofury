@@ -48,22 +48,32 @@ module.exports=(app)=>{
         let role="";
         if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com")role="admin";
         res.render('videos', { title: req.params.type + " videos", videos: videos,offset:parseInt(req.params.offset)+24,type:req.params.type,nbResults:nbResults,role:role})
-        });
+    });
 
-        //Change le type de video
-        app.get('/tango-videos/change-type/:video/:type', (req, res) => {
+    //Change le type de video
+    app.get('/tango-videos/change-type/:video/:type', (req, res) => {
         if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
             const result=Videos.changeVideoType(req.params.video)(req.params.type);
             res.send("over");
         }else{
             res.redirect('login?login=false');
         }
-        })
+    })
 
-        //Set video as top video
-        app.get('/tango-videos/set-top/:video/:mode', (req, res) => {
+    //Set video as top video
+    app.get('/tango-videos/set-top/:video/:mode', (req, res) => {
         if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
             const result=Videos.setTopVideos(req.params.video)(req.params.mode);
+            res.send("over");
+        }else{
+            res.redirect('login?login=false');
+        }
+    })
+
+    //Delete video
+    app.get('/delete-video/:video', (req, res) => {
+        if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
+            const result=Videos.deleteVideo(req.params.video);
             res.send("over");
         }else{
             res.redirect('login?login=false');
