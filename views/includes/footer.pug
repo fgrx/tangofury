@@ -80,6 +80,7 @@ script.
             var maestro= this.dataset.maestro
             var httpRequest = new XMLHttpRequest();
             url="/account/subscribe/"+maestro;
+            console.log(url);
             httpRequest.onreadystatechange = function(data) {
             };
             httpRequest.open("GET", url);
@@ -144,7 +145,7 @@ script.
                 const video= this.dataset.video;
 
                 let httpRequest = new XMLHttpRequest();
-                const url=`/delete-video/${video}`;
+                const url=`/tango-videos/delete-video/${video}`;
 
                 httpRequest.onreadystatechange = function(data) {
                 };
