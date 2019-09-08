@@ -1,4 +1,5 @@
 const Maestros=require("../controllers/maestros");
+const Videos = require("../controllers/videos");
 
 module.exports=(app)=>{
 
