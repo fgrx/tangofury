@@ -19,7 +19,7 @@ html
                 form(method="POST" action="/connexion")
                     div.field  
                         p.control.has-icons-left.has-icons-right
-                            input.input(type="email" name='login' placeholder="Email")
+                            input.input(type="email" name='login' placeholder="Email" value=email)
                             span.icon.is-small.is-left
                                 i.fas.fa-envelope  
                             span.icon.is-small.is-right     
@@ -30,6 +30,8 @@ html
                             input.input(type="password" name="password" placeholder="Password")
                             span.icon.is-small.is-left
                                 i.fas.fa-lock
+
+                    input.input(type="hidden" name="page" value=page)
 
                     div.field
                         p.control
