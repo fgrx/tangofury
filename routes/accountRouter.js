@@ -1,4 +1,6 @@
 const Account=require("../controllers/account");
+const Playlist=require("../controllers/playlists");
+const Maestros=require("../controllers/maestros");
 
 module.exports=(app)=>{
 
