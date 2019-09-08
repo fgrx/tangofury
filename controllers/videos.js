@@ -27,7 +27,7 @@ getAllTopVideos = async(offset)=>{
         });
     }); 
 
-    return topVideos.reverse().splice(0, offset);
+    return topVideos.reverse().splice(offset, offset+24);
 }
 
 getVideos= (maestro)=>(type)=>(offset)=>(nbQueries)=>{
