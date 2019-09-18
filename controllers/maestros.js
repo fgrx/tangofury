@@ -1,6 +1,6 @@
 const {db}= require('../config/db.js');
 
-getMaestros= (user)=>{
+getMaestros= (user="")=>{
     return new Promise(async(resolve)=>{
         var arr=[];
         var arrIndexTop=[];

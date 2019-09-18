@@ -66,17 +66,22 @@ getVideos= (maestro)=>(type)=>(offset)=>(nbQueries)=>{
     });  
 }
 
-deleteVideo=async(videoKey)=>{
+deleteVideo=(videoKey)=>async(youtubeId)=>{
     //delete video from maestros
-    const maestroList=await Maestros.getMaestros("");
-    maestroList.forEach(maestro => {
+
+    const maestroList=await Maestros.getMaestros();
+    maestroList.forEach(maestro => {   
+        console.log("maestros/"+maestro.key+"/videos");
         db
         .ref("maestros/"+maestro.key+"/videos")
         .orderByChild("youtubeId")
-        .equalTo(videoKey)
+        .equalTo(youtubeId)
         .once("value")
         .then((querySnapshot) => {
+            //console.log(querySnapshot)
             querySnapshot.forEach(function (doc) {
+                //console.log(doc)
+                //console.log("delete",doc)
                 db.ref("maestros/"+maestro.key+"/videos/"+doc.key).set(null);
             });
         });
@@ -84,7 +89,7 @@ deleteVideo=async(videoKey)=>{
 
     //delete from general
     db.ref("videos/"+videoKey).set(null);
-    db.ref(`/videos-deleted/`).push(videoKey);
+    db.ref(`/videos-deleted/`).push(youtubeId);
 }
 
 getDeletedVideos=async()=>{
