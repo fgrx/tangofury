@@ -106,11 +106,10 @@ function buildVideo(item){
 async function addVideo(video,maestroID){
     return new Promise(async(resolve) => {
         //construction of the video
-        let added=false;
         console.log("ingestion de la video ?"+ video.title +" "+video.youtubeId);
         if(video.youtubeId){
             // Adding video to the general node
-            const fnFindGeneral = db.ref("videos").orderByChild("youtubeId").equalTo(video.youtubeId);
+            const fnFindGeneral = db.ref("videos/").orderByChild("youtubeId").equalTo(video.youtubeId);
             const snapshotFindInGeneral=await fnFindGeneral.once("value");
             if (snapshotFindInGeneral.exists()){
                 //la video existe deja
@@ -119,7 +118,6 @@ async function addVideo(video,maestroID){
                 //la video n'existe pas, on ingère
                 const fnAddGeneral = db.ref(`videos/`)
                 snapAddGeneral = await fnAddGeneral.push(video)
-                added=true;
                 console.log("video ajoutée dans le général "+video.youtubeId);
             }
 

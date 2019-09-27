@@ -8,6 +8,7 @@ getTopVideos = async()=>{
         snapshot.forEach((snap)=>{
             let videoArray=snap.val();
             videoArray.key=snap.key;
+            videoArray.title=purifyText(videoArray.title);
             topVideos.push(videoArray);
         });
     }); 
@@ -23,6 +24,7 @@ getAllTopVideos = async(offset)=>{
     ref = db.ref("videos").orderByChild("topVideo").equalTo(1).limitToLast(limit);
     await ref.once("value", async function(snapshot) {
         snapshot.forEach((snap)=>{
+            snap.val().title=purifyText(snap.val().title);
             topVideos.push(snap.val());
         });
     }); 
@@ -33,7 +35,7 @@ getAllTopVideos = async(offset)=>{
 getVideos= (maestro)=>(type)=>(offset)=>(nbQueries)=>{
     return new Promise(async(resolve)=>{
         let videos=[];
-        var testOffset=parseInt(offset);
+        const testOffset=parseInt(offset);
         if(isNaN(testOffset))testOffset=0;
 
         const limit =testOffset+nbQueries;
@@ -56,6 +58,7 @@ getVideos= (maestro)=>(type)=>(offset)=>(nbQueries)=>{
         await fb.once("value",(snapshot) =>{
             snapshot.forEach((snap)=>{
                 let videoArray=snap.val();
+                videoArray.title=purifyText(videoArray.title);
                 videoArray.key=snap.key;
                 videos.push(videoArray);
             });
@@ -137,6 +140,12 @@ changeVideoType=(videoKey)=>(typeVideo)=>{
 
         return db.ref(`/videos/${videoKey}`).set(video);
     });
+}
+
+purifyText = (stringToPurify)=>{
+    return stringToPurify.replace(/&amp;/g,"")
+                        .replace(/&quot;/g,'"')
+                        .replace(/&#39;/g,"'")
 }
 
 exports.getTopVideos=getTopVideos;
