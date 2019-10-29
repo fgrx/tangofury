@@ -1,9 +1,9 @@
 const {db, firebase}= require('../config/db.js');
 const Maestros=require("./maestros");
 
-getTopVideos = async()=>{
-    var topVideos=[];
-    ref = db.ref("videos").orderByChild("topVideo").equalTo(1).limitToLast(12);
+const getTopVideos = async()=>{
+    let topVideos=[];
+    const ref = db.ref("videos").orderByChild("topVideo").equalTo(1).limitToLast(12);
     await ref.once("value", async function(snapshot) {
         snapshot.forEach((snap)=>{
             let videoArray=snap.val();
@@ -16,12 +16,12 @@ getTopVideos = async()=>{
     return topVideos.reverse();
 }
 
-getAllTopVideos = async(offset)=>{
+const getAllTopVideos = async(offset)=>{
     let topVideos=[];
     let nbQueries=24;
     const limit =parseInt(offset)+nbQueries;
 
-    ref = db.ref("videos").orderByChild("topVideo").equalTo(1).limitToLast(limit);
+    const ref = db.ref("videos").orderByChild("topVideo").equalTo(1).limitToLast(limit);
     await ref.once("value", async function(snapshot) {
         snapshot.forEach((snap)=>{
             snap.val().title=purifyText(snap.val().title);
@@ -32,44 +32,44 @@ getAllTopVideos = async(offset)=>{
     return topVideos.reverse().splice(offset, offset+24);
 }
 
-getVideos= (maestro)=>(type)=>(offset)=>(nbQueries)=>{
-    return new Promise(async(resolve)=>{
-        let videos=[];
-        const testOffset=parseInt(offset);
-        if(isNaN(testOffset))testOffset=0;
+const getVideos= (maestro)=>(type)=>(offset)=>async(nbQueries)=>{
+    let videos=[];
+    let testOffset=parseInt(offset);
+    if(isNaN(testOffset))testOffset=0;
 
-        const limit =testOffset+nbQueries;
-        if(maestro==null){
-            if(type=="all"){
-                //var fb=db.ref(`/videos`).orderByChild("datePublication").limitToLast(limit);
-                var fb=db.ref(`/videos`).orderByChild("dateAdd").limitToLast(limit);
-            }else{
-                var fb=db.ref(`/videos`).orderByChild("type").equalTo(type).limitToLast(limit);
-            }
+    const limit =testOffset+nbQueries;
+    let fb;
+
+    if(maestro==null){
+        if(type=="all"){
+            //var fb=db.ref(`/videos`).orderByChild("datePublication").limitToLast(limit);
+            fb=db.ref(`/videos`).orderByChild("dateAdd").limitToLast(limit);
         }else{
-            if(type=="all"){
-                //var fb=db.ref("maestros/"+maestro.key +"/videos").orderByChild("datePublication").limitToLast(limit);
-                var fb=db.ref("maestros/"+maestro.key +"/videos").orderByChild("dateAdd").limitToLast(limit);
-            }else{
-                var fb=db.ref("maestros/"+maestro.key +"/videos").orderByChild("type").equalTo(type).limitToLast(limit);
-            }
+            fb=db.ref(`/videos`).orderByChild("type").equalTo(type).limitToLast(limit);
         }
-    
-        await fb.once("value",(snapshot) =>{
-            snapshot.forEach((snap)=>{
-                let videoArray=snap.val();
-                videoArray.title=purifyText(videoArray.title);
-                videoArray.key=snap.key;
-                videos.push(videoArray);
-            });
-            videos.reverse();
-            videos.splice(0, offset);
-        }); 
-        resolve(videos);
-    });  
+    }else{
+        if(type=="all"){
+            //var fb=db.ref("maestros/"+maestro.key +"/videos").orderByChild("datePublication").limitToLast(limit);
+            fb=db.ref("maestros/"+maestro.key +"/videos").orderByChild("dateAdd").limitToLast(limit);
+        }else{
+            fb=db.ref("maestros/"+maestro.key +"/videos").orderByChild("type").equalTo(type).limitToLast(limit);
+        }
+    }
+
+    await fb.once("value",(snapshot) =>{
+        snapshot.forEach((snap)=>{
+            let videoArray=snap.val();
+            videoArray.title=purifyText(videoArray.title);
+            videoArray.key=snap.key;
+            videos.push(videoArray);
+        });
+        videos.reverse();
+        videos.splice(0, offset);
+    }); 
+    return(videos); 
 }
 
-deleteVideo=(videoKey)=>async(youtubeId)=>{
+const deleteVideo=(videoKey)=>async(youtubeId)=>{
     //delete video from maestros
 
     const maestroList=await Maestros.getMaestros();
@@ -95,7 +95,7 @@ deleteVideo=(videoKey)=>async(youtubeId)=>{
     db.ref(`/videos-deleted/`).push(youtubeId);
 }
 
-getDeletedVideos=async()=>{
+const getDeletedVideos=async()=>{
     let deletedVideos=Array();
 
     const fnRef=db.ref("videos-deleted");
@@ -108,7 +108,7 @@ getDeletedVideos=async()=>{
     return deletedVideos;
 }
 
-setTopVideos=(videoKey)=>(mode)=>{
+const setTopVideos=(videoKey)=>(mode)=>{
     db.ref(`/videos/${videoKey}`).once("value")
     .then((doc) => {
             let video=doc.val();
@@ -117,7 +117,7 @@ setTopVideos=(videoKey)=>(mode)=>{
     });
 }
 
-changeVideoType=(videoKey)=>(typeVideo)=>{
+const changeVideoType=(videoKey)=>(typeVideo)=>{
     //Dans le général
     db.ref(`/videos/${videoKey}`).once("value")
     .then(async(doc) => {
@@ -142,7 +142,7 @@ changeVideoType=(videoKey)=>(typeVideo)=>{
     });
 }
 
-purifyText = (stringToPurify)=>{
+const purifyText = (stringToPurify)=>{
     return stringToPurify.replace(/&amp;/g,"")
                         .replace(/&quot;/g,'"')
                         .replace(/&#39;/g,"'")

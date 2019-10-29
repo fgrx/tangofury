@@ -4,7 +4,7 @@ const Videos=require('./videos');
 const axios = require("axios");
 
 
-async function importVideos(){
+const importVideos=async()=>{
     //Récupère la liste des maestros
     const maestros= await Maestros.getMaestros();
 
@@ -21,45 +21,42 @@ async function importVideos(){
     return "Done !";
 }
 
-function findVideos(maestro,deletedVideos){
-    return new Promise(async(resolve)=>{
-        console.log(`Importation de ${maestro.surname} ${maestro.name}`)
-        //const ytKey="AIzaSyDjZZJFivBihtQBNWhlY3s8HTci9YJ8vw0";
-        const ytKey="AIzaSyCNyquOFjQF8xWA8a6A8hARyyWvblMngjw";
-        const req="https://www.googleapis.com/youtube/v3/search?key="+ytKey+"&order=date&maxResults=50&part=snippet&q="+getSearchString(maestro);
-        
-        await axios.get(req).then(async (response)=>{
-            //console.log("response",response['data']['items']);
-            for(const item of response['data']['items']){
-                if(isOkVideo(item.id.videoId,deletedVideos)){
-                    //console.log("ok video",item);
-                    const video=buildVideo(item);
-                    console.log("preparation ajout "+video.youtubeId)
-                    const testAddVideo=await addVideo(video,maestro.key);
-                }
+const findVideos=(maestro)=>async(deletedVideos)=>{
+    console.log(`Importation de ${maestro.surname} ${maestro.name}`)
+    //const ytKey="AIzaSyDjZZJFivBihtQBNWhlY3s8HTci9YJ8vw0";
+    const ytKey="AIzaSyCNyquOFjQF8xWA8a6A8hARyyWvblMngjw";
+    const req="https://www.googleapis.com/youtube/v3/search?key="+ytKey+"&order=date&maxResults=50&part=snippet&q="+getSearchString(maestro);
+    
+    await axios.get(req).then(async (response)=>{
+        //console.log("response",response['data']['items']);
+        for(const item of response['data']['items']){
+            if(isOkVideo(item.id.videoId,deletedVideos)){
+                //console.log("ok video",item);
+                const video=buildVideo(item);
+                console.log("preparation ajout "+video.youtubeId)
             }
-        });
-        resolve(true);
+        }
     });
+    return(true);
 }
 
-function getSearchString(maestro){
+const getSearchString=(maestro)=>{
     let search = (maestro.nickname) ? maestro.surname+" "+maestro.nickname+" "+maestro.name : maestro.surname+" "+maestro.name ;
     if(maestro.homonyme==true)search+=" tango";
     return search;
 }
 
-function setNbNewVideosMaestro(maestroID,nbVideos){
+const setNbNewVideosMaestro=(maestroID)=>(nbVideos)=>{
     return new Promise(resolve=>{
         const refFn=db.ref(`maestros-infos/${maestroID}/videosToday/`)
-        const snap=refFn.set(nbVideos,(snap)=>{
+        refFn.set(nbVideos,()=>{
             console.log("passage de "+maestroID+" a "+nbVideos+" videos");
-            resolve(snap);
         });
+        resolve(true);
     })
 }
 
-function incrementNbNewVideosMaestro(maestroID){
+const incrementNbNewVideosMaestro=(maestroID)=>{
     return new Promise(resolve=>{
         const refFn=db.ref(`maestros-infos/${maestroID}/videosToday`);
         refFn.once("value",async (querySnapshot)=>{
@@ -73,7 +70,7 @@ function incrementNbNewVideosMaestro(maestroID){
 }
 
 
-function isOkVideo(idVideo,deletedVideos){
+const isOkVideo=(idVideo)=>(deletedVideos)=>{
     //test if video is not deleted
     if(deletedVideos.indexOf(idVideo)>-1){
         //la video existe deja
@@ -83,7 +80,7 @@ function isOkVideo(idVideo,deletedVideos){
     }
 }
 
-function buildVideo(item){
+const buildVideo=(item)=>{
     const ytId= (item.id.videoId) ? item.id.videoId : item.videoId;
 
     const video={
@@ -103,47 +100,45 @@ function buildVideo(item){
 }
 
 
-async function addVideo(video,maestroID){
-    return new Promise(async(resolve) => {
-        //construction of the video
-        console.log("ingestion de la video ?"+ video.title +" "+video.youtubeId);
-        if(video.youtubeId){
-            // Adding video to the general node
-            const fnFindGeneral = db.ref("videos/").orderByChild("youtubeId").equalTo(video.youtubeId);
-            const snapshotFindInGeneral=await fnFindGeneral.once("value");
-            if (snapshotFindInGeneral.exists()){
-                //la video existe deja
-                console.log("video existe dans le general")
-            }else{
-                //la video n'existe pas, on ingère
-                const fnAddGeneral = db.ref(`videos/`)
-                snapAddGeneral = await fnAddGeneral.push(video)
-                console.log("video ajoutée dans le général "+video.youtubeId);
-            }
+const addVideo=(video)=>async(maestroID)=>{
+    //construction of the video
+    console.log("ingestion de la video ?"+ video.title +" "+video.youtubeId);
+    if(video.youtubeId){
+        // Adding video to the general node
+        const fnFindGeneral = db.ref("videos/").orderByChild("youtubeId").equalTo(video.youtubeId);
+        const snapshotFindInGeneral=await fnFindGeneral.once("value");
+        if (snapshotFindInGeneral.exists()){
+            //la video existe deja
+            console.log("video existe dans le general")
+        }else{
+            //la video n'existe pas, on ingère
+            const fnAddGeneral = db.ref(`videos/`)
+            await fnAddGeneral.push(video)
+            console.log("video ajoutée dans le général "+video.youtubeId);
+        }
 
 
-            //Adding the video to the maestro node
-            const refFn=db.ref("maestros/"+maestroID +"/videos").orderByChild("youtubeId").equalTo(video.youtubeId)
-            const snapshotExistInNode = await refFn.once("value");
-            if (snapshotExistInNode.exists()){
-                //la video existe deja
-                console.log("video existe dans le noeud");
-            }else{
-                //la video n'existe pas, on ingère
-                console.log("ajout de la video noeud maestro " ,video)
-                const FnAdd=db.ref(`maestros/${maestroID}/videos/`);
-                const snapNode=await FnAdd.push(video);
-                const increment = await incrementNbNewVideosMaestro(maestroID);
-                console.log("video ajoutée dans le noeud "+video.youtubeId);
-            }
-        } 
-        resolve(true);
-    });
+        //Adding the video to the maestro node
+        const refFn=db.ref("maestros/"+maestroID +"/videos").orderByChild("youtubeId").equalTo(video.youtubeId)
+        const snapshotExistInNode = await refFn.once("value");
+        if (snapshotExistInNode.exists()){
+            //la video existe deja
+            console.log("video existe dans le noeud");
+        }else{
+            //la video n'existe pas, on ingère
+            console.log("ajout de la video noeud maestro " ,video)
+            const FnAdd=db.ref(`maestros/${maestroID}/videos/`);
+            await FnAdd.push(video);
+            await incrementNbNewVideosMaestro(maestroID);
+            console.log("video ajoutée dans le noeud "+video.youtubeId);
+        }
+    } 
+    return(true);
 }
 
 
 
-function formatDate(myDate){
+const formatDate=(myDate)=>{
     var mm = myDate.getMonth() + 1; // getMonth() is zero-based
     var dd = myDate.getDate();
 
@@ -153,7 +148,7 @@ function formatDate(myDate){
             ].join('-');
 }
 
-function findType(item){
+const findType=(item)=>{
     let type="";
     if(item.snippet.title){
         if(item.snippet.title.toLowerCase().indexOf("vals")>-1) type="vals";

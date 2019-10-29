@@ -6,7 +6,7 @@ module.exports=(app)=>{
     app.get('/tango-videos/delete-video/:video/:youtube', (req, res) => {
         console.log("yt",req.params.youtube)
         if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
-            const result=Videos.deleteVideo(req.params.video)(req.params.youtube);
+            Videos.deleteVideo(req.params.video)(req.params.youtube);
             res.send("over");
         }else{
             res.redirect('login?login=false');
@@ -26,7 +26,7 @@ module.exports=(app)=>{
     //Change le type de video
     app.get('/tango-videos/change-type/:video/:type', (req, res) => {
         if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
-            const result=Videos.changeVideoType(req.params.video)(req.params.type);
+            Videos.changeVideoType(req.params.video)(req.params.type);
             res.send("over");
         }else{
             res.redirect('login?login=false');
@@ -36,7 +36,7 @@ module.exports=(app)=>{
     //Set video as top video
     app.get('/tango-videos/set-top/:video/:mode', (req, res) => {
         if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
-            const result=Videos.setTopVideos(req.params.video)(req.params.mode);
+            Videos.setTopVideos(req.params.video)(req.params.mode);
             res.send("over");
         }else{
             res.redirect('login?login=false');

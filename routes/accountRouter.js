@@ -15,7 +15,7 @@ module.exports=(app)=>{
 
     //test de connexion
     app.post('/connexion', async (req, res) => {
-        data=req.body;
+        const data=req.body;
         const UserConnected=await Account.checkConnexion(data.login)(data.password);
         const page=data.page;
 

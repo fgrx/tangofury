@@ -9,10 +9,10 @@ module.exports=(app)=>{
         if(req.session.userKey!=undefined)user=req.session.userKey;
         const maestros= await Maestros.getMaestros(user);
         res.render('maestros-list',{title:"Tango maestros list",maestros:maestros,descriptionPage:"List off all the most famous tango maestros"})
-        });
+    });
 
-        //Affichage d'un maestro
-        app.get('/tango-maestros/:slug/:type/:offset', async (req, res) => {
+    //Affichage d'un maestro
+    app.get('/tango-maestros/:slug/:type/:offset', async (req, res) => {
         let user="";
         if(req.session.userKey!=undefined)user=req.session.userKey;
         let maestro= await Maestros.getMaestro(req.params.slug)("")(user);
