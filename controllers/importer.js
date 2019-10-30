@@ -9,16 +9,17 @@ const importVideos=async()=>{
     const maestros= await Maestros.getMaestros();
 
     const deletedVideos=await Videos.getDeletedVideos();
-
-    maestros.map(async(maestro)=>{
+    maestros.forEach(async(maestro)=>{
         //if(maestro.key=="PO25e78zbd"){
-            await setNbNewVideosMaestro(maestro.key,0);
-            await findVideos(maestro,deletedVideos);
+            await setNbNewVideosMaestro(maestro.key)(0);
+            const videos = await findVideos(maestro)(deletedVideos);
+            await addVideos(maestro.key)(videos);
+            //console.log(videos);
         //}
     });
     
 
-    return "Done !";
+    return "done!";
 }
 
 const findVideos=(maestro)=>async(deletedVideos)=>{
@@ -27,17 +28,21 @@ const findVideos=(maestro)=>async(deletedVideos)=>{
     const ytKey="AIzaSyCNyquOFjQF8xWA8a6A8hARyyWvblMngjw";
     const req="https://www.googleapis.com/youtube/v3/search?key="+ytKey+"&order=date&maxResults=50&part=snippet&q="+getSearchString(maestro);
     
-    await axios.get(req).then(async (response)=>{
+    let arrayVideos=[];
+
+    await axios.get(req).then((response)=>{
         //console.log("response",response['data']['items']);
-        for(const item of response['data']['items']){
-            if(isOkVideo(item.id.videoId,deletedVideos)){
-                //console.log("ok video",item);
-                const video=buildVideo(item);
-                console.log("preparation ajout "+video.youtubeId)
+        const videos=response['data']['items'];
+
+        videos.forEach(videoItem=>{
+            if(isNotDeletedVideo(videoItem.id.videoId,deletedVideos)){
+                const video=buildVideo(videoItem);
+                arrayVideos.push(video);
             }
-        }
+        })
     });
-    return(true);
+
+    return(arrayVideos);
 }
 
 const getSearchString=(maestro)=>{
@@ -63,14 +68,14 @@ const incrementNbNewVideosMaestro=(maestroID)=>{
             let nb=querySnapshot.val();
             nb=nb+1;
             console.log("nbvideos "+nb);
-            await setNbNewVideosMaestro(maestroID,nb);
+            await setNbNewVideosMaestro(maestroID)(nb);
             resolve(true);
         });
     });
 }
 
 
-const isOkVideo=(idVideo)=>(deletedVideos)=>{
+const isNotDeletedVideo=(idVideo)=>(deletedVideos)=>{
     //test if video is not deleted
     if(deletedVideos.indexOf(idVideo)>-1){
         //la video existe deja
@@ -99,33 +104,22 @@ const buildVideo=(item)=>{
     return video;
 }
 
+const addVideos=(maestroId)=>async(videos)=>videos.map(video=>addVideo(video)(maestroId));
 
 const addVideo=(video)=>async(maestroID)=>{
     //construction of the video
     console.log("ingestion de la video ?"+ video.title +" "+video.youtubeId);
     if(video.youtubeId){
         // Adding video to the general node
-        const fnFindGeneral = db.ref("videos/").orderByChild("youtubeId").equalTo(video.youtubeId);
-        const snapshotFindInGeneral=await fnFindGeneral.once("value");
-        if (snapshotFindInGeneral.exists()){
-            //la video existe deja
-            console.log("video existe dans le general")
-        }else{
-            //la video n'existe pas, on ingère
+
+        if(isPresentInGeneralNode(video)===false){
             const fnAddGeneral = db.ref(`videos/`)
             await fnAddGeneral.push(video)
             console.log("video ajoutée dans le général "+video.youtubeId);
         }
 
-
         //Adding the video to the maestro node
-        const refFn=db.ref("maestros/"+maestroID +"/videos").orderByChild("youtubeId").equalTo(video.youtubeId)
-        const snapshotExistInNode = await refFn.once("value");
-        if (snapshotExistInNode.exists()){
-            //la video existe deja
-            console.log("video existe dans le noeud");
-        }else{
-            //la video n'existe pas, on ingère
+        if(isPresentInMaestroNode(maestroID)(video)===false){
             console.log("ajout de la video noeud maestro " ,video)
             const FnAdd=db.ref(`maestros/${maestroID}/videos/`);
             await FnAdd.push(video);
@@ -134,6 +128,29 @@ const addVideo=(video)=>async(maestroID)=>{
         }
     } 
     return(true);
+}
+
+const isPresentInGeneralNode=async(video)=>{
+    const fnFindGeneral = db.ref("videos/").orderByChild("youtubeId").equalTo(video.youtubeId);
+    const snapshotFindInGeneral=await fnFindGeneral.once("value");
+    if(snapshotFindInGeneral.exists() ){
+        console.log("video existe dans le general")
+        return true;
+    }else{
+        return false;
+    }
+}
+
+const isPresentInMaestroNode=(maestroID)=>async(video)=>{
+    const refFn=db.ref("maestros/"+maestroID +"/videos").orderByChild("youtubeId").equalTo(video.youtubeId)
+    const snapshotExistInNode = await refFn.once("value");
+    if (snapshotExistInNode.exists()){
+        //la video existe deja
+        console.log("video existe dans le noeud");
+        return true
+    }else{
+        return false;
+    }
 }
 
 
@@ -174,5 +191,5 @@ const findType=(item)=>{
 }
 
 exports.import=importVideos;
-exports.isOkVideo=isOkVideo;
+exports.isOkVideo=isNotDeletedVideo;
 exports.addVideo=addVideo;

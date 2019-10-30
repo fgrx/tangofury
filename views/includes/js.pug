@@ -1,0 +1,159 @@
+
+
+script.
+    //Burger menu
+    document.addEventListener('DOMContentLoaded', () => {
+        // Get all "navbar-burger" elements
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+        // Check if there are any navbar burgers
+        if ($navbarBurgers.length > 0) {
+
+            // Add a click event on each of them
+            $navbarBurgers.forEach( el => {
+                el.addEventListener('click', () => {
+
+                    // Get the target from the "data-target" attribute
+                    const target = el.dataset.target;
+                    const $target = document.getElementById(target);
+
+                    // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                    el.classList.toggle('is-active');
+                    $target.classList.toggle('is-active');
+
+                });
+            });
+        }
+    });
+
+
+
+script(src="/yall-js/dist/yall.min.js")
+script(src="/list.js/dist/list.min.js")
+script(src="/js/mediabox.min.js")
+
+script.
+    var options = {
+        valueNames: [ 'maestroName','maestroRole' ],
+        listClass: "myList"
+    };
+    var maestroList = new List('maestroList',options);
+
+script.
+    document.addEventListener("DOMContentLoaded", yall);
+
+script. 
+    MediaBox('.mediabox');
+
+script.
+    //Gestion de l'abonnement au maestro
+    [].forEach.call(document.querySelectorAll('a.subscribeMaestro'), function(el) {
+        el.addEventListener('click', function(event) {
+            this.classList.add("is-hidden");
+            messageBox=document.createElement("div");
+            messageBox.classList.add("notification","is-small","is-success");
+            messageBox.innerHTML="<i class='fas fa-check'></i> Added to your favorites";
+            this.parentNode.insertBefore(messageBox,this);
+            var maestro= this.dataset.maestro
+            var httpRequest = new XMLHttpRequest();
+            url="/account/subscribe/"+maestro;
+            console.log(url);
+            httpRequest.onreadystatechange = function(data) {
+            };
+            httpRequest.open("GET", url);
+            httpRequest.send();
+            event.preventDefault();
+        })
+        
+    });
+
+
+    [].forEach.call(document.querySelectorAll('a.unsubscribeMaestro'), function(el) {
+        el.addEventListener('click', function(event) {
+            this.classList.add("is-hidden");
+            messageBox=document.createElement("div");
+            messageBox.classList.add("notification","is-small","is-success");
+            messageBox.innerHTML="<i class='fas fa-check'></i> Removed from your favorites";
+            this.parentNode.insertBefore(messageBox,this);
+
+            var maestro= this.dataset.maestro
+            var httpRequest = new XMLHttpRequest();
+            url="/account/unsubscribe/"+maestro;
+            httpRequest.onreadystatechange = function(data) {
+            };
+            httpRequest.open("GET", url);
+            httpRequest.send();
+            event.preventDefault();
+        })
+        
+    })
+
+script.
+    //Gestion des top vidéos
+    [].forEach.call(document.querySelectorAll('a.setTopVideo'), function(el) {
+        el.addEventListener('click', function(event) {
+            this.classList.add("is-hidden");
+            messageBox=document.createElement("div");
+            messageBox.classList.add("notification","is-small","is-success");
+            const mode= this.dataset.mode;
+            const addRemove=mode==1?"Added to":"Removed from"
+            messageBox.innerHTML=`<i class='fas fa-check'></i> ${addRemove} top videos`;
+            this.parentNode.insertBefore(messageBox,this);
+            const video= this.dataset.video;
+            let httpRequest = new XMLHttpRequest();
+            const url=`/tango-videos/set-top/${video}/${mode}`;
+            httpRequest.onreadystatechange = function(data) {
+            };
+            httpRequest.open("GET", url);
+            httpRequest.send();
+            event.preventDefault();
+        })
+        
+    });
+
+script.
+    //Gestion de la suppression vidéos
+    [].forEach.call(document.querySelectorAll('a.deleteVideo'), function(el) {
+        el.addEventListener('click', function(event) {
+        
+            if(window.confirm("Are you sure you want to delete this video ? ")){
+                this.parentNode.parentNode.parentNode.parentNode.remove();
+                
+                const video= this.dataset.video;
+                const youtubeId= this.dataset.youtube;
+
+                let httpRequest = new XMLHttpRequest();
+                const url=`/tango-videos/delete-video/${video}/${youtubeId}`;
+
+                httpRequest.onreadystatechange = function(data) {
+                };
+                httpRequest.open("GET", url);
+                httpRequest.send();
+                event.preventDefault();
+            }
+            
+        })
+        
+    });
+
+script.
+    //Gestion du typage des vidéos
+    [].forEach.call(document.querySelectorAll('a.typeVideo'), function(el) {
+       
+        el.addEventListener('click', function(event) {
+            const typeOfVideo= this.dataset.type;
+            const video= this.dataset.video;
+            let httpRequest = new XMLHttpRequest();
+            let displayContainer=this.closest(".content");
+            let displayType=displayContainer.querySelector(".videoType");
+            displayType.innerHTML = typeOfVideo;
+
+            const url=`/tango-videos/change-type/${video}/${typeOfVideo}`;
+            httpRequest.onreadystatechange = function(data) {
+            };
+            httpRequest.open("GET", url);
+            httpRequest.send();
+            event.preventDefault();
+        })
+        
+    });

@@ -7,11 +7,12 @@ div.column.is-one-quarter-desktop.is-half-mobile.is-3-tablet
             div.card-content
                 div.content
                     h3.title.is-5= itemVideo.title
-                    time
+                    div.typeAndTime
                         if !itemVideo.type
-                            =  "tango " + moment(itemVideo.datePublication).format("YYYY/MM/DD")
+                            =  "<span class='videoType'>tango<span> " + moment(itemVideo.datePublication).format("YYYY/MM/DD")
                         else
-                            = itemVideo.type + " " + moment(itemVideo.datePublication).format("YYYY/MM/DD")
+                            span.videoType= itemVideo.type 
+                            span.videosTime= " "+moment(itemVideo.datePublication).format("YYYY/MM/DD") 
                     if(role=="admin")
                         .admin
                             if(itemVideo.topVideo==1)
