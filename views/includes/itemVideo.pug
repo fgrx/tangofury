@@ -9,7 +9,8 @@ div.column.is-one-quarter-desktop.is-half-mobile.is-3-tablet
                     h3.title.is-5= itemVideo.title
                     div.typeAndTime
                         if !itemVideo.type
-                            =  "<span class='videoType'>tango<span> " + moment(itemVideo.datePublication).format("YYYY/MM/DD")
+                            span.videoType= "tango" 
+                            span.videosTime= " "+moment(itemVideo.datePublication).format("YYYY/MM/DD") 
                         else
                             span.videoType= itemVideo.type 
                             span.videosTime= " "+moment(itemVideo.datePublication).format("YYYY/MM/DD") 
