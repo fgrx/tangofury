@@ -74,14 +74,13 @@ const getMaestro=(slug)=>(key)=>async(user)=>{
     }
 
     if(key!=""){
-        const maestroRef=db.ref(`/maestros-infos`).orderByChild('slug').equalTo(slug);
-        const snapShot=await maestroRef.once("value");
-        snapShot.forEach(querySnapshot=>{
-            maestro=querySnapshot.val();
-            maestro.key=querySnapshot.key;
-            const imageClear=maestro.image.replace("2018/03/","").replace("2018/04/","").replace("/","");
-            maestro.urlImage="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/maestros%2F"+imageClear+"?alt=media";
-        });
+        const maestroRef=db.ref(`/maestros-infos/${key}`);
+        const doc=await maestroRef.once("value");
+        maestro=doc.val();
+        maestro.key=doc.key;
+        const imageClear=maestro.image.replace("2018/03/","").replace("2018/04/","").replace("/","");
+        maestro.urlImage="https://firebasestorage.googleapis.com/v0/b/tango-videos-2ce36.appspot.com/o/maestros%2F"+imageClear+"?alt=media";
+  
     }
     
     user ? maestro.favorite=false : maestro.favorite="noconnexion";

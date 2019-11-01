@@ -1,31 +1,31 @@
 div.column.is-2-desktop.is-half-mobile.is-3-tablet
-        div.itemMaestro.card
-            a(href="/tango-maestros/"+itemMaestro.slug+"/all/0")
-                div.card-image
-                    if itemMaestro.videosToday > 0
-                        div.cptVideos
-                            span.counterVideos
-                                i.fas.fa-plus 
-                                = itemMaestro.videosToday+" "
-                            |videos today
-                    figure.image.is-square
-                        img.is-rounded.lazy(data-src=itemMaestro.urlImage src="/img/placeholder.png" alt=itemMaestro.surname+ " " + itemMaestro.name+"'s portrait's")
-            div.card-content
-                div.content
-                    a(href="/tango-maestros/"+itemMaestro.slug+"/all/0")
-                        if itemMaestro.nickname!= undefined
-                            -var maestroName= itemMaestro.surname+ " " + itemMaestro.nickname+" "+ itemMaestro.name
-                        else
-                            -var maestroName= itemMaestro.surname+ " " + itemMaestro.name
-                        h3.title.is-5.maestroName= maestroName
-                    p.maestroRole= itemMaestro.role
-                            
-                    if itemMaestro.favorite== true
-                        a.unsubscribeMaestro.is-small.button(href="#" data-maestro=itemMaestro.key)
-                            i.fas.fa-trash-alt
-                            |remove from favs
-                    
-                    if itemMaestro.favorite== false
-                        a.subscribeMaestro.is-small.button(href="#" data-maestro=itemMaestro.key)
-                            i.fas.fa-star
-                            |Add to Favs
+    div.itemMaestro.card
+        a(href="/tango-maestros/"+itemMaestro.slug+"/all/0")
+            div.card-image
+                if itemMaestro.videosToday > 0
+                    div.cptVideos
+                        span.counterVideos
+                            i.fas.fa-plus 
+                            = itemMaestro.videosToday+" "
+                        |videos today
+                figure.image.is-square
+                    img.is-rounded.lazy(data-src=itemMaestro.urlImage src="/img/placeholder.png" alt=itemMaestro.surname+ " " + itemMaestro.name+"'s portrait's")
+        div.card-content
+            div.content
+                a(href="/tango-maestros/"+itemMaestro.slug+"/all/0")
+                    if itemMaestro.nickname!= undefined
+                        -var maestroName= itemMaestro.surname+ " " + itemMaestro.nickname+" "+ itemMaestro.name
+                    else
+                        -var maestroName= itemMaestro.surname+ " " + itemMaestro.name
+                    h3.title.is-5.maestroName= maestroName
+                p.maestroRole= itemMaestro.role
+                        
+                if itemMaestro.favorite== true
+                    a.unsubscribeMaestro.is-small.button(href="#" data-maestro=itemMaestro.key)
+                        i.fas.fa-trash-alt
+                        |remove from favs
+                
+                if itemMaestro.favorite== false
+                    a.subscribeMaestro.is-small.button(href="#" data-maestro=itemMaestro.key)
+                        i.fas.fa-star
+                        |Add to Favs
