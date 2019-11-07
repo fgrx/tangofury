@@ -26,7 +26,7 @@ module.exports=(app)=>{
     //Change le type de video
     app.get('/tango-videos/change-type/:video/:type', (req, res) => {
         if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
-            Videos.changeVideoType(req.params.video)(req.params.type);
+            const res=Videos.changeVideoType(req.params.video)(req.params.type);
             res.send("over");
         }else{
             res.redirect('login?login=false');

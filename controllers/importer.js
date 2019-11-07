@@ -11,40 +11,39 @@ const importVideos=async()=>{
     const deletedVideos=await Videos.getDeletedVideos();
 
     maestros.forEach(async(maestro)=>{
-        //if(maestro.key=="PO25e78zbd"){
+        //if(maestro.key=="-LVN9tLFTPpJinqm6lqx" || maestro.key=="-LVN9tLAyhD-V-izb4W7" || maestro.key=="-LVN9tKxhFigIrxT3Y8t" || maestro.key==="-LVN9tL05d1UbmaCY1_X"){
             await setNbNewVideosMaestro(maestro.key)(0);
             const videos = await findVideos(maestro)(deletedVideos);
-            await addVideos(maestro.key)(videos);
+            await addVideos(maestro.key)(videos);        
         //}
     });
     
     return "done!";
 }
 
-const addVideos=(maestroId)=>async(videos)=>videos.map(video=>addVideo(video)(maestroId));
+const addVideos=(maestroId)=>(videos)=>videos.map(async(video)=>await addVideo(video)(maestroId));
 
 const addVideo=(video)=>async(maestroID)=>{
     //construction of the video
     if(video.youtubeId){
         // Adding video to the general node
         //console.log("ingestion de la video ?"+ video.title +" "+video.youtubeId);
-        if(isVideoPresentInGeneralNode(video)===false){
+        if(isVideoPresentInGeneralNode(video.youtubeId)===false){
             const fnAddGeneral = db.ref(`videos/`)
             await fnAddGeneral.push(video)
-            //console.log("video ajoutée dans le général "+video.youtubeId);
+            console.log("video ajoutée dans le général "+video.title);
         }else{
-            //console.log("vidéo déja présente dans le général");
+            console.log("vidéo déja présente dans le général"+video.title);
         }
 
         //Adding the video to the maestro node
-        if(isVideoPresentInMaestroNode(maestroID)(video)===false){
-            console.log("ajout de la video noeud maestro " ,video)
+        if(isVideoPresentInMaestroNode(maestroID)(video.youtubeId)===false){
             const FnAdd=db.ref(`maestros/${maestroID}/videos/`);
             await FnAdd.push(video);
             await incrementNbNewVideosMaestro(maestroID);
-            //console.log("video ajoutée dans le noeud "+video.youtubeId);
+            console.log("video ajoutée dans le noeud "+video.title);
         }else{
-            //console.log("vidéo déja présente dans le maestro");
+            console.log("vidéo déja présente dans le maestro"+video.title);
         }
     } 
     return(true);
@@ -57,8 +56,10 @@ const findVideos=(maestro)=>async(deletedVideos)=>{
     const req="https://www.googleapis.com/youtube/v3/search?key="+ytKey+"&order=date&maxResults=50&part=snippet&q="+getSearchString(maestro);
     
     let arrayVideos=[];
-    console.log(req);
-    await axios.get(req).then((response)=>{
+    console.log("request",req);
+   
+    try{
+        const response= await axios.get(req);
         //console.log("response",response['data']['items']);
         const videos=response['data']['items'];
 
@@ -68,17 +69,35 @@ const findVideos=(maestro)=>async(deletedVideos)=>{
                 arrayVideos.push(video);
             }
         })
-    }).catch(error=>{
-        console.log(error.response);
-        return Promise.reject(error.response);
-    });
+    }catch(error){
+        if (error.response) {
+            /*
+             * The request was made and the server responded with a
+             * status code that falls out of the range of 2xx
+             */
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+        } else if (error.request) {
+            /*
+             * The request was made but no response was received, `error.request`
+             * is an instance of XMLHttpRequest in the browser and an instance
+             * of http.ClientRequest in Node.js
+             */
+            console.log(error.request);
+        } else {
+            // Something happened in setting up the request and triggered an Error
+            console.log('Error', error.message);
+        }
+    }
+    
     //console.log("vidéos trouvées",arrayVideos);
     return(arrayVideos);
 }
 
 const getSearchString=(maestro)=>{
     let search = (maestro.nickname) ? maestro.surname+"%20"+maestro.nickname+"%20"+maestro.name : maestro.surname+"%20"+maestro.name ;
-    if(maestro.homonyme==true)search+=" tango";
+    if(maestro.homonyme==true)search+="%20tango";
     return search;
 }
 
@@ -135,29 +154,22 @@ const buildVideo=(item)=>{
     return video;
 }
 
-
-
-const isVideoPresentInGeneralNode=async(video)=>{
-    const fnFindGeneral = db.ref("videos/").orderByChild("youtubeId").equalTo(video.youtubeId);
-    const snapshotFindInGeneral=await fnFindGeneral.once("value");
-    if(snapshotFindInGeneral.exists() ){
-        //console.log("video existe dans le general")
-        return true;
-    }else{
-        return false;
-    }
+function isokfunc(){
+    return true;
 }
 
-const isVideoPresentInMaestroNode=(maestroID)=>async(video)=>{
-    const refFn=db.ref("maestros/"+maestroID +"/videos").orderByChild("youtubeId").equalTo(video.youtubeId)
+const isVideoPresentInGeneralNode=async(videoYoutubeID)=>{
+    const fnFindGeneral = db.ref("videos/").orderByChild("youtubeId").equalTo(videoYoutubeID);
+    const snapshotFindInGeneral=await fnFindGeneral.once("value");
+    if(snapshotFindInGeneral.exists() )return true;
+    return false;
+}
+
+const isVideoPresentInMaestroNode=(maestroID)=>async(videoYoutubeID)=>{
+    const refFn=db.ref("maestros/"+maestroID +"/videos").orderByChild("youtubeId").equalTo(videoYoutubeID)
     const snapshotExistInNode = await refFn.once("value");
-    if (snapshotExistInNode.exists()){
-        //la video existe deja
-        //console.log("video existe dans le noeud");
-        return true
-    }else{
-        return false;
-    }
+    if (snapshotExistInNode.exists())return true;
+    return false;
 }
 
 
@@ -197,6 +209,10 @@ const findType=(item)=>{
     return type;
 }
 
-exports.import=importVideos;
-exports.isOkVideo=isNotDeletedVideo;
-exports.addVideo=addVideo;
+module.exports = {
+    importVideos,
+    isOkVideo:isNotDeletedVideo,
+    addVideo,
+    isVideoPresentInGeneralNode,
+    isokfunc
+}
