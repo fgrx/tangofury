@@ -16,6 +16,7 @@ const importVideos=async()=>{
             const videos = await findVideos(maestro)(deletedVideos);
             await addVideos(maestro.key)(videos);        
         //}
+        console.log("coucou");
     });
     
     return "done!";
