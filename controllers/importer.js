@@ -8,12 +8,10 @@ const importVideos=async()=>{
     //Récupère la liste des maestros
     const maestros= await Maestros.getMaestros();
 
-    const deletedVideos=await Videos.getDeletedVideos();
-
     maestros.forEach(async(maestro)=>{
         //if(maestro.key=="-LVN9tLFTPpJinqm6lqx" || maestro.key=="-LVN9tLAyhD-V-izb4W7" || maestro.key=="-LVN9tKxhFigIrxT3Y8t" || maestro.key==="-LVN9tL05d1UbmaCY1_X"){
             await setNbNewVideosMaestro(maestro.key)(0);
-            const videos = await findVideos(maestro)(deletedVideos);
+            const videos = await findVideos(maestro)
             await addVideos(maestro.key)(videos);        
         //}
         console.log("coucou");
@@ -34,7 +32,7 @@ const addVideo=(video)=>async(maestroID)=>{
             await fnAddGeneral.push(video)
             console.log("video ajoutée dans le général "+video.title);
         }else{
-            console.log("vidéo déja présente dans le général"+video.title);
+            //console.log("vidéo déja présente dans le général"+video.title);
         }
 
         //Adding the video to the maestro node
@@ -44,23 +42,27 @@ const addVideo=(video)=>async(maestroID)=>{
             await incrementNbNewVideosMaestro(maestroID);
             console.log("video ajoutée dans le noeud "+video.title);
         }else{
-            console.log("vidéo déja présente dans le maestro"+video.title);
+            //console.log("vidéo déja présente dans le maestro"+video.title);
         }
     } 
     return(true);
 }
 
-const findVideos=(maestro)=>async(deletedVideos)=>{
+const findVideos=async(maestro)=>{
     console.log(`Importation de ${maestro.surname} ${maestro.name}`)
     //const ytKey="AIzaSyDjZZJFivBihtQBNWhlY3s8HTci9YJ8vw0";
+
+    const deletedVideos=await Videos.getDeletedVideos();
+
     const ytKey="AIzaSyCNyquOFjQF8xWA8a6A8hARyyWvblMngjw";
     const req="https://www.googleapis.com/youtube/v3/search?key="+ytKey+"&order=date&maxResults=50&part=snippet&q="+getSearchString(maestro);
-    
+    const reqEncoded=encodeURI(req);
+
     let arrayVideos=[];
     console.log("request",req);
    
     try{
-        const response= await axios.get(req);
+        const response= await axios.get(reqEncoded);
         //console.log("response",response['data']['items']);
         const videos=response['data']['items'];
 
@@ -97,8 +99,8 @@ const findVideos=(maestro)=>async(deletedVideos)=>{
 }
 
 const getSearchString=(maestro)=>{
-    let search = (maestro.nickname) ? maestro.surname+"%20"+maestro.nickname+"%20"+maestro.name : maestro.surname+"%20"+maestro.name ;
-    if(maestro.homonyme==true)search+="%20tango";
+    let search = (maestro.nickname) ? maestro.surname+"-"+maestro.nickname+"-"+maestro.name : maestro.surname+"-"+maestro.name ;
+    if(maestro.homonyme==true)search+="-tango";
     return search;
 }
 

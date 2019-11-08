@@ -28,7 +28,7 @@ module.exports=(app)=>{
     //page d'imports
     app.get('/import', async (req, res) => {
         if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
-            const imports=await Importer.import();
+            const imports=await Importer.importVideos();
             res.render('import',{title:"Videos importation",imports,descriptionPage:"Videos importation"})
         }else{
             res.redirect('login?login=false&page=import');
