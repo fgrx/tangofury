@@ -14,7 +14,6 @@ const importVideos=async()=>{
             const videos = await findVideos(maestro)
             await addVideos(maestro.key)(videos);        
         //}
-        console.log("coucou");
     });
     
     return "done!";
@@ -24,28 +23,31 @@ const addVideos=(maestroId)=>(videos)=>videos.map(async(video)=>await addVideo(v
 
 const addVideo=(video)=>async(maestroID)=>{
     //construction of the video
+    let added = false;
     if(video.youtubeId){
         // Adding video to the general node
-        //console.log("ingestion de la video ?"+ video.title +" "+video.youtubeId);
-        if(isVideoPresentInGeneralNode(video.youtubeId)===false){
+        console.log("ingestion de la video ?"+ video.title +" "+video.youtubeId);
+        if(await isVideoPresentInGeneralNode(video.youtubeId)===false){
             const fnAddGeneral = db.ref(`videos/`)
             await fnAddGeneral.push(video)
             console.log("video ajoutée dans le général "+video.title);
+            added =true;
         }else{
             //console.log("vidéo déja présente dans le général"+video.title);
         }
 
         //Adding the video to the maestro node
-        if(isVideoPresentInMaestroNode(maestroID)(video.youtubeId)===false){
+        if(await isVideoPresentInMaestroNode(maestroID)(video.youtubeId)===false){
             const FnAdd=db.ref(`maestros/${maestroID}/videos/`);
             await FnAdd.push(video);
             await incrementNbNewVideosMaestro(maestroID);
             console.log("video ajoutée dans le noeud "+video.title);
+            added=true;
         }else{
             //console.log("vidéo déja présente dans le maestro"+video.title);
         }
     } 
-    return(true);
+    return(added);
 }
 
 const findVideos=async(maestro)=>{
