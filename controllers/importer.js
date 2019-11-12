@@ -13,7 +13,6 @@ const importVideos=async()=>{
             await setNbNewVideosMaestro(maestro.key)(0);
             const videos = await findVideos(maestro)
             await addVideos(maestro.key)(videos);
-		    console.log("coucou");
         }
     });
     
@@ -160,9 +159,6 @@ const buildVideo=(item)=>{
     return video;
 }
 
-function isokfunc(){
-    return true;
-}
 
 const isVideoPresentInGeneralNode=async(videoYoutubeID)=>{
     const fnFindGeneral = db.ref("videos/").orderByChild("youtubeId").equalTo(videoYoutubeID);

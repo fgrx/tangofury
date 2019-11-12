@@ -1,13 +1,6 @@
 const Importer=require("../../controllers/importer");
 
 
-describe("isokfunc",()=>{
-    it("should return false",async()=>{
-        const result = Importer.isokfunc();
-        expect(result).toBe(true);
-    })
-});
-
 describe("testExistVideoGeneralTrue",()=>{
     it("should return true",async()=>{
         const result =  await Importer.isVideoPresentInGeneralNode("ZaZTTR-FvgY");
