@@ -9,12 +9,12 @@ const importVideos=async()=>{
     const maestros= await Maestros.getMaestros();
 
     maestros.forEach(async(maestro)=>{
-        //if(maestro.key=="-LVN9tLFTPpJinqm6lqx" || maestro.key=="-LVN9tLAyhD-V-izb4W7" || maestro.key=="-LVN9tKxhFigIrxT3Y8t" || maestro.key==="-LVN9tL05d1UbmaCY1_X"){
+        if(maestro.key=="-LVN9tLFTPpJinqm6lqx" || maestro.key=="-LVN9tLAyhD-V-izb4W7" || maestro.key=="-LVN9tKxhFigIrxT3Y8t" || maestro.key==="-LVN9tL05d1UbmaCY1_X"){
             await setNbNewVideosMaestro(maestro.key)(0);
             const videos = await findVideos(maestro)
-            await addVideos(maestro.key)(videos);        
-        //}
-        console.log("coucou");
+            await addVideos(maestro.key)(videos);
+		    console.log("coucou");
+        }
     });
     
     return "done!";
