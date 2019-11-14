@@ -36,5 +36,5 @@ require('./routes/selectionsRouter.js')(app);
 require('./routes/videosRouter.js')(app);
 require('./routes/playlistsRouter.js')(app);
 
-const port = process.env.PORT || 3006;
+const port = process.env.PORT || 3007;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
