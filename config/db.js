@@ -21,7 +21,7 @@ const storage = new Storage({
 
 const bucket=storage.bucket("tango-videos-2ce36.appspot.com");
 
-const firebaseAuth = new FirebaseAuth("AIzaSyCVa04BCfCUaYUPcZloAnlxa4nK1Tmo7ps");
+const firebaseAuth = new FirebaseAuth("**********");
 
 exports.db = db;
 exports.firebaseAuth= firebaseAuth;
