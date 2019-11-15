@@ -7,7 +7,7 @@ module.exports=(app)=>{
         console.log("yt",req.params.youtube)
         if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
             Videos.deleteVideo(req.params.video)(req.params.youtube);
-            res.send("over");
+            res.status(200).json({result:"video deleted"})
         }else{
             res.redirect('login?login=false');
         }
@@ -27,7 +27,7 @@ module.exports=(app)=>{
     app.get('/tango-videos/change-type/:video/:type', (req, res) => {
         if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
             const res=Videos.changeVideoType(req.params.video)(req.params.type);
-            res.send("over");
+            res.status(200).json({result:"video type changed"})
         }else{
             res.redirect('login?login=false');
         }
@@ -37,7 +37,7 @@ module.exports=(app)=>{
     app.get('/tango-videos/set-top/:video/:mode', (req, res) => {
         if(req.session.userKey!=undefined && req.session.userMail==="fab.grignoux@gmail.com"){
             Videos.setTopVideos(req.params.video)(req.params.mode);
-            res.send("over");
+            res.status(200).json({result:"video is set as a top video"})
         }else{
             res.redirect('login?login=false');
         }
