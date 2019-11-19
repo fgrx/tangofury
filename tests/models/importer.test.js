@@ -1,5 +1,5 @@
 const Importer=require("../../controllers/importer");
-
+const Videos=require("../../controllers/videos");
 
 describe("testExistVideoGeneralTrue",()=>{
     it("should return true",async()=>{
@@ -15,18 +15,22 @@ describe("testExistVideoGeneralFalse",()=>{
     })
 });
 
+describe("isDeleted",()=>{
+    it("should return true", async()=>{
+        const deletedVideos=await Videos.getDeletedVideos();
+        const result=Importer.isNotDeletedVideo("hQD6HxAuCxc")(deletedVideos)
+        expect(result).toBe(false);
+    });
+})
+
 describe("TestImportVideoFalse",()=>{
     it("should return true",async()=>{
         let added = false;
-        let youtubeId="ZaZTTR-FvgY";
+        let youtubeId="ZaZTTR-FvgYf";
         if(youtubeId){
             // Adding video to the general node
-            console.log("ingestion de la video ?"+youtubeId);
             if(await Importer.isVideoPresentInGeneralNode(youtubeId)===false){
-                console.log("video ajoutée dans le général "+youtubeId);
                 added =true;
-            }else{
-                console.log("vidéo déja présente dans le général");
             }
         } 
        

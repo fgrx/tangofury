@@ -69,7 +69,7 @@ const findVideos=async(maestro)=>{
         const videos=response['data']['items'];
 
         videos.forEach(videoItem=>{
-            if(isNotDeletedVideo(videoItem.id.videoId,deletedVideos)){
+            if(isNotDeletedVideo(videoItem.id.videoId)(deletedVideos)){
                 const video=buildVideo(videoItem);
                 arrayVideos.push(video);
             }
@@ -216,4 +216,5 @@ module.exports = {
     isOkVideo:isNotDeletedVideo,
     addVideo,
     isVideoPresentInGeneralNode,
+    isNotDeletedVideo
 }
